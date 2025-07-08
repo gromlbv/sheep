@@ -30,7 +30,7 @@ def convert_to_mp4(file, url, output_dir):
         "-c:v", "libx264", "-preset", "fast", "-crf", "23",
         "-c:a", "aac", "-b:a", "128k",
         output_path
-    ], check=True)
+    ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
     os.remove(temp_path)
     return output_path
