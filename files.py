@@ -19,32 +19,46 @@ def convert_to_webp(file, url, output_dir):
     return output_path
 
 def convert_to_mp4(file, url, output_dir):
+
+    print('НАЧАЛ КОНВЕРТ')
     os.makedirs(output_dir, exist_ok=True)
     output_path = os.path.join(output_dir, f"{url}.mp4")
     temp_path = os.path.join(output_dir, f"temp_{url}.input")
 
+    print("Saving temp file to:", temp_path)
     file.save(temp_path)
+    print("Temp file exists:", os.path.exists(temp_path))
 
-    subprocess.run([
+    result = subprocess.run([
         "ffmpeg", "-i", temp_path,
         "-c:v", "libx264", "-preset", "fast", "-crf", "23",
         "-c:a", "aac", "-b:a", "128k",
         output_path
-    ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    ], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+
+    print("FFMPEG returncode:", result.returncode)
+    print("FFMPEG stderr:", result.stderr)
+    print("Output file exists:", os.path.exists(output_path), output_path)
 
     os.remove(temp_path)
     return output_path
 
 def upload(url, preview, background, highlight, video):
-    try:
-        return {
-            "preview": convert_to_webp(preview, url, "static/previews"),
-            "background": convert_to_webp(background, url, "static/backgrounds"),
-            "highlight": convert_to_webp(highlight, url, "static/highlights"),
-            "video": convert_to_mp4(video, url, "static/videos"),
-        }
-    except Exception as e:
-        return {"error": str(e)}
+    # try:
+        if preview:
+            convert_to_webp(preview, url, "static/previews")
+        if background:
+            convert_to_webp(background, url, "static/backgrounds")
+        if highlight:
+            convert_to_webp(highlight, url, "static/highlights")
+        if video:
+            convert_to_mp4(video, url, "static/videos")
+
+        return True
+    # except Exception as e:
+    #     print('ошибка !!!!!!!!!!!!', str(e))
+
+    #     return {"error": str(e)}
 
 
 

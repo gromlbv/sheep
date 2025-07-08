@@ -59,7 +59,7 @@ def video_add_post():
     background = request.files['background']
     highlight = request.files['highlight']
     video_file = request.files['video']
-    
+    print("Video file:", video_file, video_file.filename)
     upload(url, preview, background, highlight, video_file)
     
     max_order = db.get_max_video_order()
