@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+
+
+{% block content %}
+
+
+<header>
+  <img src="{{ url_for('static', filename='images/logos/') }}">
+
+</header>
+<div class="hero">
+  <img class="hero-img" src="static/hero-delete.png" alt=""/>
+</div>
+<h1 id="main-title" class="fixed">
+  <span class="word">HELLO,</span>
+  <span class="word">WE</span>
+  <span class="word">ARE</span><br>
+  <span class="word">ELECTRIC</span>
+  <span class="word">SHEEP</span><br>
+  <span class="word">FILM</span>
+</h1>
+
+<div class="page-1">
+  {% for video in videos %}
+  <div class="video">
+    <video id="player" src="{{ url_for('static', filename='videos/' + video.url) }}.mp4" autoplay loop muted playsinline></video>
+    <button onclick="toggle()">⏯ Пауза/Пуск</button>
+    <h3>{{ video.title }}</h3>
+    <img src="{{ url_for('static', filename='previews/' + video.url + '.webp') }}">
+    <img class="preview" src="{{ url_for('static', filename='backgrounds/' + video.url) }}.webp">
+    <div class="absolute-btn">
+      <form action="/pro/delete/{{ video.url }}" method="post">
+        <input type="submit" value="x">
+      </form>
+    </div>
+  </div>
+  <div class="video flex-cl">
+    <h2>{{ video.title }}</h2>
+
+    <a href="{{ url_for('static', filename='previews/' + video.url) }}.png">PREVIEW {{ url_for('static',
+      filename='previews/' + video.url) }}.png</a>
+    <a href="{{ url_for('static', filename='backgrounds/' + video.url) }}.png">BACKGRND {{ url_for('static',
+      filename='backgrounds/' + video.url) }}.png</a>
+    <a href="{{ url_for('static', filename='videos/' + video.url) }}.png">VIDEO {{ url_for('static', filename='images/'
+      + video.url) }}.png</a>
+
+    <img src="{{ url_for('static', filename='videos/' + video.url) }}.png" alt="">
+  </div>
+  {% endfor %}
+</div>
+
+<script>
+  $(document).ready(function () {
+    const $h1 = $('#main-title');
+    const switchPoint = $('.page-1').offset().top;
+    const $words = $('.word');
+
+    $(window).on('scroll', function () {
+      const scrollY = $(window).scrollTop();
+
+      if (scrollY >= switchPoint) {
+        $h1.removeClass('fixed').addClass('relative');
+      } else {
+        $h1.addClass('fixed').removeClass('relative');
+      }
+
+      const triggerStage1 = 150;
+      const triggerStart = 200;
+      const step = 110;
+
+      if (scrollY > triggerStage1) {
+        $words.addClass('stage1');
+      } else {
+        $words.removeClass('stage1');
+      }
+
+      $words.each(function (index) {
+        const triggerPoint = triggerStart + index * step;
+        if (scrollY > triggerPoint) {
+          $(this).addClass('visible');
+        } else {
+          $(this).removeClass('visible');
+        }
+      });
+    });
+  });
+
+
+  function toggle() {
+  const v = document.getElementById("player");
+  v.paused ? v.play() : v.pause();
+}
+</script>
+
+
+{% endblock %}

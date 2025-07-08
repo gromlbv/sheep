@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+
+
+{% block content %}
+
+<div class="pro-form">
+
+<form class="pro" action="/pro/login" method="post" class="flex-cl">
+    <h2>ADMIN PURPOSES ONLY</h2>
+    <label for="password">PASSWORD</label>
+    <input type="password" name="password" id="password">
+    <input type="submit" value="LOGIN">
+    <a href="/">GO BACK</a>
+</form>
+
+
+{% endblock content %}
