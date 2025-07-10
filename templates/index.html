@@ -10,45 +10,98 @@
 
 </header>
 <div class="hero">
-  <img class="hero-img" src="static/hero-delete.png" alt=""/>
+  <img class="hero-img" src="static/hero-delete.png" alt="" />
 </div>
-<h1 id="main-title" class="fixed">
+<!-- <h1 id="main-title" class="fixed">
   <span class="word">HELLO,</span>
   <span class="word">WE</span>
   <span class="word">ARE</span><br>
   <span class="word">ELECTRIC</span>
   <span class="word">SHEEP</span><br>
   <span class="word">FILM</span>
-</h1>
+</h1> -->
 
-<div class="page-1">
+
+<div id="videos-container">
   {% for video in videos %}
-  <div class="video">
-    <video id="player" src="{{ url_for('static', filename='videos/' + video.url) }}.mp4" autoplay loop muted playsinline></video>
-    <button onclick="toggle()">⏯ Пауза/Пуск</button>
-    <h3>{{ video.title }}</h3>
-    <img src="{{ url_for('static', filename='previews/' + video.url + '.webp') }}">
-    <img class="preview" src="{{ url_for('static', filename='backgrounds/' + video.url) }}.webp">
-    <div class="absolute-btn">
-      <form action="/pro/delete/{{ video.url }}" method="post">
-        <input type="submit" value="x">
-      </form>
+  <div class="video-wrapper"
+    style="position: absolute; top: {{ loop.index0 * 200 }}px; left: {{ (loop.index0 % 2 == 0) and '12%' or '55%' }};">
+    <video src="{{ url_for('static', filename='videos/' + video.url) }}.mp4" autoplay muted loop></video>
+    <div class="info">
+      <h2>{{ video.title }}</h2>
+      <p>Producer: Andrey</p>
     </div>
-  </div>
-  <div class="video flex-cl">
-    <h2>{{ video.title }}</h2>
-
-    <a href="{{ url_for('static', filename='previews/' + video.url) }}.png">PREVIEW {{ url_for('static',
-      filename='previews/' + video.url) }}.png</a>
-    <a href="{{ url_for('static', filename='backgrounds/' + video.url) }}.png">BACKGRND {{ url_for('static',
-      filename='backgrounds/' + video.url) }}.png</a>
-    <a href="{{ url_for('static', filename='videos/' + video.url) }}.png">VIDEO {{ url_for('static', filename='images/'
-      + video.url) }}.png</a>
-
-    <img src="{{ url_for('static', filename='videos/' + video.url) }}.png" alt="">
   </div>
   {% endfor %}
 </div>
+
+<style>
+  #videos-container {
+    position: relative;
+    height: 2800px;
+    overflow: hidden;
+  }
+
+  .video-wrapper {
+    position: relative;
+    width: 300px;
+    height: 200px;
+    will-change: transform;
+
+    border: 1px solid #ffffff20;
+
+    transition: height 0.3s, width 0.45s;
+
+
+    video {
+      z-index: 4;
+
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+
+    }
+
+    .info {
+      position: absolute;
+      bottom: 120px;
+      z-index: -1;
+
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+
+      opacity: 0.5;
+
+      transition: bottom 0.3s, opacity 0.3s;
+    }
+  }
+
+  .video-wrapper:hover {
+    width: 500px;
+    height: 300px;
+
+    .info{
+      bottom: -64px;
+
+      opacity: 1;
+    }
+  }
+</style>
+
+<script>
+  const wrappers = document.querySelectorAll('.video-wrapper');
+
+  window.addEventListener('scroll', () => {
+    const scrollY = window.scrollY;
+    wrappers.forEach((el, i) => {
+      const speed = 0.5 + (i % 5) * 0.1;
+      el.style.transform = `translateY(${scrollY * speed}px)`;
+    });
+  });
+</script>
+
 
 <script>
   $(document).ready(function () {
@@ -88,9 +141,9 @@
 
 
   function toggle() {
-  const v = document.getElementById("player");
-  v.paused ? v.play() : v.pause();
-}
+    const v = document.getElementById("player");
+    v.paused ? v.play() : v.pause();
+  }
 </script>
 
 
