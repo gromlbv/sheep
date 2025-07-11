@@ -54,21 +54,26 @@ def add():
 def video_add_post():
     url = request.form.get('url')
     title = request.form.get('title')
-    
-    preview = request.files['preview']
-    background = request.files['background']
-    highlight = request.files['highlight']
-    video_file = request.files['video']
-    print("Video file:", video_file, video_file.filename)
-    upload(url, preview, background, highlight, video_file)
-    
-    max_order = db.get_max_video_order()
+    is_featured = request.form.get('is_featured') == 'on'
+
     if not url:
         raise ValueError('NO URL')
     if not title:
         raise ValueError('NO TITLE')
+    if not is_featured:
+        is_featured = False
+
+    preview = request.files['preview']
+    background = request.files['background']
+    highlight = request.files['highlight']
+    video_file = request.files['video']
+
+    upload(url, preview, background, highlight, video_file)
     
-    video = db.create_video(title, url, max_order + 1)
+    max_order = db.get_max_video_order()
+
+    
+    video = db.create_video(title, url, is_featured, max_order + 1)
     
     roles = request.form.getlist("credit_roles[]")
     names = request.form.getlist("credit_names[]")

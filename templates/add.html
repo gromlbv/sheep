@@ -6,9 +6,21 @@
 
 <div class="pro-form">
 <form class="pro" action="" method="post" enctype="multipart/form-data">
-    <input type="text" name="title" placeholder="Title" required>
-    <input type="text" name="url" placeholder="URL" required>
-    <p>url example: parimatch-epic-battle</p>
+
+    <div class="flex gap-4">
+        <label class="custom-checkbox-pro">
+            <input type="checkbox" name="is_featured">
+            <span class="checkmark"></span>
+        </label>
+        <input type="text" name="title" placeholder="Title" required>
+    </div>
+
+    <div class="flex-cl gap-4">
+        <div class="flex">
+            <input type="text" name="url" placeholder="URL" required>
+        </div>
+        <p>url example: parimatch-epic-battle</p>
+    </div>
 
     <label for="preview">Preview</label>
     <input type="file" name="preview" id="preview">

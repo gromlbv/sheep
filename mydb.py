@@ -23,13 +23,12 @@ def video_delete(url):
 def get_max_video_order() -> int:
     return db.session.query(func.max(Video.order)).scalar() or 0
 
-def create_video(title: str, url: str, order: int) -> Video:
-    video = Video(title=title, url=url, credits=[], order=order)
+def create_video(title: str, url: str, is_featured: bool, order: int) -> Video:
+    video = Video(title=title, url=url, credits=[], is_featured=is_featured, order=order)
     db.session.add(video)
     return video
 
 def create_credits(video, roles, names, favs) -> None:
-    # Создаем список отмеченных чекбоксов
     checked_favs = set(i for i, fav in enumerate(favs) if fav == 'on')
     
     for i, (role, name) in enumerate(zip(roles, names)):
