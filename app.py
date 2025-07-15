@@ -31,7 +31,8 @@ def login_required(f):
 @app.get('/index')
 def index():
     videos = db.video_get()
-    return render_template('index.html', videos=videos)
+    featured_videos = db.video_get()
+    return render_template('index.html', videos=videos, featured_videos=featured_videos)
 
 
 

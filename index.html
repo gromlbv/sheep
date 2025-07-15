@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Карточки со скроллом</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            height: 1000vh; /* Много высоты для скролла */
+        }
+
+        .container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .card {
+            position: absolute;
+            width: 100%;
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .card:nth-child(1) {
+            height: 200px;
+            top: 0;
+            z-index: 3;
+        }
+
+        .card:nth-child(2) {
+            height: 100vh;
+            top: 200px;
+            z-index: 2;
+        }
+
+        .card:nth-child(3) {
+            height: 100vh;
+            top: 220px;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card" data-index="0">Карточка 1</div>
+        <div class="card" data-index="1">Карточка 2</div>
+        <div class="card" data-index="2">Карточка 3</div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            let cards = [];
+            let currentIndex = 0;
+            let cardCount = 10;
+            let scrollThreshold = 800;
+            let lastScrollTop = 50;
+            let currentSection = 0;
+            
+            // Создаем карточки
+            for (let i = 0; i < cardCount; i++) {
+                cards.push({
+                    content: `Карточка ${i + 1}`,
+                    color: `hsl(${(i * 360) / cardCount}, 70%, 80%)`
+                });
+            }
+
+            function updateCards() {
+                $('.card').each(function(index) {
+                    let cardIndex = (currentIndex + index) % cardCount;
+                    $(this).text(cards[cardIndex].content);
+                    $(this).css('background-color', cards[cardIndex].color);
+                });
+            }
+
+            function snapToPosition() {
+                $('.card').each(function(index) {
+                    let $card = $(this);
+                    
+                    if (index === 0) {
+                        $card.css({
+                            'transform': 'translateY(0)',
+                            'top': '0px',
+                            'height': '200px',
+                            'z-index': 3
+                        });
+                    } else if (index === 1) {
+                        $card.css({
+                            'transform': 'translateY(0)',
+                            'top': '200px',
+                            'height': '100vh',
+                            'z-index': 2
+                        });
+                    } else if (index === 2) {
+                        $card.css({
+                            'transform': 'translateY(0)',
+                            'top': '220px',
+                            'height': '100vh',
+                            'z-index': 1
+                        });
+                    }
+                });
+            }
+
+            function moveToNext() {
+                currentIndex = (currentIndex + 1) % cardCount;
+                
+                // Анимация "прыжка"
+                $('.card').each(function(index) {
+                    let $card = $(this);
+                    
+                    if (index === 0) {
+                        // Первая карточка уезжает вверх
+                        $card.css('transform', 'translateY(-220px)');
+                        setTimeout(() => {
+                            $card.css({
+                                'top': '220px',
+                                'height': '100vh',
+                                'z-index': 1
+                            });
+                        }, 150);
+                    } else if (index === 1) {
+                        // Вторая становится первой
+                        $card.css({
+                            'top': '0px',
+                            'height': '200px',
+                            'z-index': 3
+                        });
+                    } else if (index === 2) {
+                        // Третья становится второй
+                        $card.css({
+                            'top': '200px',
+                            'height': '100vh',
+                            'z-index': 2
+                        });
+                    }
+                });
+                
+                setTimeout(() => {
+                    updateCards();
+                    snapToPosition();
+                }, 300);
+            }
+
+            function moveToPrev() {
+                currentIndex = (currentIndex - 1 + cardCount) % cardCount;
+                
+                // Анимация "прыжка" назад
+                $('.card').each(function(index) {
+                    let $card = $(this);
+                    
+                    if (index === 2) {
+                        // Последняя карточка приезжает сверху
+                        $card.css({
+                            'transform': 'translateY(-220px)',
+                            'top': '0px',
+                            'height': '200px',
+                            'z-index': 3
+                        });
+                        setTimeout(() => {
+                            $card.css('transform', 'translateY(0)');
+                        }, 50);
+                    } else if (index === 0) {
+                        // Первая становится второй
+                        $card.css({
+                            'top': '200px',
+                            'height': '100vh',
+                            'z-index': 2
+                        });
+                    } else if (index === 1) {
+                        // Вторая становится третьей
+                        $card.css({
+                            'top': '220px',
+                            'height': '100vh',
+                            'z-index': 1
+                        });
+                    }
+                });
+                
+                setTimeout(() => {
+                    updateCards();
+                    snapToPosition();
+                }, 300);
+            }
+
+            $(window).on('scroll', function() {
+                let scrollTop = $(window).scrollTop();
+                let scrollDirection = scrollTop > lastScrollTop ? 'down' : 'up';
+                lastScrollTop = scrollTop;
+                
+                // Определяем текущую секцию
+                let newSection = Math.floor(scrollTop / scrollThreshold);
+                let scrollProgress = (scrollTop % scrollThreshold) / scrollThreshold;
+                
+                // Медленное движение карточек во время скролла
+                if (scrollDirection === 'down') {
+                    let moveAmount = scrollProgress * 50; // Медленное движение вверх
+                    
+                    $('.card').each(function(index) {
+                        let $card = $(this);
+                        if (index === 0) {
+                            $card.css('transform', `translateY(-${moveAmount}px)`);
+                        } else if (index === 1) {
+                            $card.css('transform', `translateY(-${moveAmount}px)`);
+                        } else if (index === 2) {
+                            $card.css('transform', `translateY(-${moveAmount}px)`);
+                        }
+                    });
+                } else {
+                    let moveAmount = (1 - scrollProgress) * 50;
+                    
+                    $('.card').each(function(index) {
+                        let $card = $(this);
+                        if (index === 0) {
+                            $card.css('transform', `translateY(-${moveAmount}px)`);
+                        } else if (index === 1) {
+                            $card.css('transform', `translateY(-${moveAmount}px)`);
+                        } else if (index === 2) {
+                            $card.css('transform', `translateY(-${moveAmount}px)`);
+                        }
+                    });
+                }
+                
+                // Прыжок при достижении порога
+                if (newSection !== currentSection) {
+                    if (newSection > currentSection) {
+                        moveToNext();
+                    } else {
+                        moveToPrev();
+                    }
+                    currentSection = newSection;
+                }
+            });
+
+            // Инициализация
+            updateCards();
+            snapToPosition();
+        });
+    </script>
+</body>
+</html>

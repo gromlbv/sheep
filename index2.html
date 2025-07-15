@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Карточки GSAP</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: rgb(14, 14, 14);
+      height: 10000px;
+    }
+
+    .card-stack-wrapper {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      z-index: 10;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .card-stack {
+      position: relative;
+      height: 100%;
+      width: 100%;
+    }
+
+    .card {
+      position: absolute;
+      width: 100%;
+      margin: 0 auto;
+      left: 0;
+      right: 0;
+      padding: 40px;
+      background: black;
+      color: white;
+      transform-origin: center;
+      box-sizing: border-box;
+      pointer-events: auto;
+    }
+    .card:nth-child(1) {
+        background-color: #1c1c1c;
+    }
+    .card:nth-child(2) {
+        background-color: #2c2c2c;
+    }
+    .card:nth-child(3) {
+        background-color: #3C3C3C;
+    }
+    .card:nth-child(4) {
+        background-color: #4C4C4C;
+    }
+    .card:nth-child(5) {
+        background-color: #5C5C5C;
+    }
+    .card-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .card-button {
+      background: #fff;
+      color: #222;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 18px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+      pointer-events: auto;
+    }
+    .card-button:active {
+      background: #e0e0e0;
+    }
+    .card-button:disabled {
+      background: #888;
+      color: #ccc;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+
+    <h1>ELECTRIC SHEEP FILM</h1>
+  <div class="card-stack-wrapper">
+    <div class="card-stack" id="cardStack">
+      <div class="card">
+        <div class="text">
+            <h1>PARIMATCH EPIC BATTLE</h1>
+        </div>
+        Карточка 1
+        <div class="card-buttons">
+          <button class="card-button next-btn">Следующая</button>
+        </div>
+      </div>
+      <div class="card">
+        Карточка 2
+        <div class="card-buttons">
+          <button class="card-button prev-btn">Предыдущая</button>
+          <button class="card-button next-btn">Следующая</button>
+        </div>
+      </div>
+      <div class="card">
+        Карточка 3
+        <div class="card-buttons">
+          <button class="card-button prev-btn">Предыдущая</button>
+          <button class="card-button next-btn">Следующая</button>
+        </div>
+      </div>
+      <div class="card">
+        Карточка 4
+        <div class="card-buttons">
+          <button class="card-button prev-btn">Предыдущая</button>
+          <button class="card-button next-btn">Следующая</button>
+        </div>
+      </div>
+      <div class="card">
+        Карточка 5
+        <div class="card-buttons">
+          <button class="card-button next-btn">Следующая</button>
+          <button class="card-button prev-btn">Предыдущая</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GSAP + ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    const cards = gsap.utils.toArray(".card");
+
+    // Установка начального состояния всех карточек
+    cards.forEach((card, i) => {
+      if (i === 0) {
+        gsap.set(card, { y: "0vh", scale: 1, height: "80vh", opacity: 1 });
+      } else if (i === 1) {
+        gsap.set(card, { y: "80vh", scale: 1, height: "10vh", opacity: 1 });
+      } else if (i === 2) {
+        gsap.set(card, { y: "90vh", scale: 1, height: "10vh", opacity: 1 });
+      } else {
+        gsap.set(card, { y: "100vh", scale: 1, height: "10vh", opacity: 0 });
+      }
+    });
+
+    cards.forEach((card, i) => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: document.body,
+          start: `${600 * i}px top`,
+          end: `${600 * (i + 1)}px top`,
+          scrub: true
+        }
+      });
+
+      // текущая карточка уходит
+      tl.to(card, {
+        y: "-100vh",
+        opacity: 1,
+        scale: 1,
+        height: "10vh",
+        duration: 10
+      });
+
+      if (cards[i + 1]) {
+        tl.to(cards[i + 1], {
+          y: "0vh",
+          scale: 1,
+          height: "80vh",
+          opacity: 1,
+          duration: 2
+        }, 0);
+      }
+
+      if (cards[i + 2]) {
+        tl.to(cards[i + 2], {
+          y: "80vh",
+          scale: 1,
+          height: "10vh",
+          opacity: 1,
+          duration: 2
+        }, 0);
+      }
+
+      if (cards[i + 3]) {
+        tl.to(cards[i + 3], {
+          y: "90vh",
+          scale: 1,
+          height: "10vh",
+          opacity: 1,
+          duration: 2
+        }, 0);
+      }
+
+      if (cards[i + 4]) {
+        tl.to(cards[i + 4], {
+          y: "100vh",
+          scale: 1,
+          height: "10vh",
+          opacity: 0,
+          duration: 2
+        }, 0);
+      }
+    });
+
+    // Кнопки "Следующая" и "Предыдущая"
+    const nextBtns = document.querySelectorAll('.next-btn');
+    const prevBtns = document.querySelectorAll('.prev-btn');
+
+    function scrollToCard(idx) {
+      // Прокручиваем страницу так, чтобы нужная карточка была активна
+      // 600px - шаг скролла для каждой карточки
+      window.scrollTo({
+        top: 600 * idx,
+        behavior: 'smooth'
+      });
+    }
+
+    nextBtns.forEach((btn, i) => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        scrollToCard(i + 1);
+      });
+    });
+
+    prevBtns.forEach((btn, i) => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        scrollToCard(i);
+      });
+    });
+  </script>
+
+</body>
+</html>
