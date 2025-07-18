@@ -45,14 +45,16 @@ class Video(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     title = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.String(100), nullable=False)
     url = db.Column(db.String(100), nullable=False, unique=True)
     credits = db.relationship('Credit', back_populates='video', cascade='all, delete-orphan')
 
     is_featured = db.Column(db.Boolean, nullable=False, default=False, server_default='0')
     order = db.Column(db.Integer)
 
-    def __init__(self, title, url, credits=None, is_featured=False, order=None):
+    def __init__(self, title, description, url, credits=None, is_featured=False, order=None):
         self.title = title
+        self.description = description
         self.url = url
         self.credits = credits or []
         self.is_featured = is_featured

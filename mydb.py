@@ -23,8 +23,8 @@ def video_delete(url):
 def get_max_video_order() -> int:
     return db.session.query(func.max(Video.order)).scalar() or 0
 
-def create_video(title: str, url: str, is_featured: bool, order: int) -> Video:
-    video = Video(title=title, url=url, credits=[], is_featured=is_featured, order=order)
+def create_video(title: str, description: str, url: str, is_featured: bool, order: int) -> Video:
+    video = Video(title=title, description=description, url=url, credits=[], is_featured=is_featured, order=order)
     db.session.add(video)
     return video
 

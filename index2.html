@@ -62,38 +62,74 @@
       margin-top: 20px;
     }
     .card-button {
-      background: #fff;
+
+      width: 128px;
+      height: 64px;
+
+      background: black;
       color: #222;
       border: none;
-      border-radius: 4px;
-      padding: 8px 18px;
       font-size: 16px;
+
       cursor: pointer;
       transition: background 0.2s;
-      pointer-events: auto;
+
+      img{
+        width: 34px;
+      }
     }
-    .card-button:active {
-      background: #e0e0e0;
+    .prev-btn{
+      width: 64px;
+      img{
+        transform: rotate(180deg);
+      }
     }
-    .card-button:disabled {
-      background: #888;
-      color: #ccc;
-      cursor: not-allowed;
+
+    .card-button:hover {
+      background: #FFFFFF;
+    }
+
+    .card{
+      display: flex;
+      gap: 32px;
+
+    }
+    .left-side{
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .right-side{
+      flex: 1;
+      img{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
     }
   </style>
 </head>
 <body>
-
-    <h1>ELECTRIC SHEEP FILM</h1>
+  <h1>ELECTRIC SHEEP FILM</h1>
   <div class="card-stack-wrapper">
     <div class="card-stack" id="cardStack">
       <div class="card">
-        <div class="text">
-            <h1>PARIMATCH EPIC BATTLE</h1>
+        <div class="left-side">
+            <div class="text">
+                <h1>PARIMATCH EPIC BATTLE</h1>
+                <p>TEXT DESCRIPTION</p>
+            </div>
+            <nav class="button-wr">
+                <button class="card-button next-btn">
+                  <img src="static/icons/arrow-bottom.svg" alt="NEXT">
+                </button>
+                <button class="card-button prev-btn">
+                  <img src="static/icons/arrow-bottom.svg" alt="PREVIOUS">
+                </button>
+            </nav>
         </div>
-        Карточка 1
-        <div class="card-buttons">
-          <button class="card-button next-btn">Следующая</button>
+        <div class="right-side">
+          <img src="static/backgrounds/" alt="">
         </div>
       </div>
       <div class="card">
@@ -127,7 +163,8 @@
     </div>
   </div>
 
-  <!-- GSAP + ScrollTrigger -->
+  <h1>TRCTER</h1>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
@@ -136,7 +173,6 @@
 
     const cards = gsap.utils.toArray(".card");
 
-    // Установка начального состояния всех карточек
     cards.forEach((card, i) => {
       if (i === 0) {
         gsap.set(card, { y: "0vh", scale: 1, height: "80vh", opacity: 1 });
@@ -174,7 +210,7 @@
           scale: 1,
           height: "80vh",
           opacity: 1,
-          duration: 2
+          duration: 3
         }, 0);
       }
 
@@ -184,7 +220,7 @@
           scale: 1,
           height: "10vh",
           opacity: 1,
-          duration: 2
+          duration: 3
         }, 0);
       }
 
@@ -194,7 +230,7 @@
           scale: 1,
           height: "10vh",
           opacity: 1,
-          duration: 2
+          duration: 3
         }, 0);
       }
 
