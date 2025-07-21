@@ -30,7 +30,8 @@ def convert_to_mp4(file, url, output_dir):
     print("Temp file exists:", os.path.exists(temp_path))
 
     result = subprocess.run([
-        "ffmpeg", "-i", temp_path,
+        "ffmpeg", "-y",
+        "-i", temp_path,
         "-c:v", "libx264", "-preset", "fast", "-crf", "23",
         "-c:a", "aac", "-b:a", "128k",
         output_path
