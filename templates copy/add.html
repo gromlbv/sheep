@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+
+
+{% block content %}
+
+<div class="pro-form">
+<form class="pro" action="" method="post" enctype="multipart/form-data">
+
+    <div class="flex gap-4">
+        <label class="custom-checkbox-pro">
+            <input type="checkbox" name="is_featured">
+            <span class="checkmark"></span>
+        </label>
+        <input type="text" name="title" placeholder="Title" required>
+    </div>
+    <div class="flex-cl gap-4">
+        <div class="flex">
+        <input type="text" name="description" placeholder="description">
+        </div>
+    </div>
+    <div class="flex-cl gap-4">
+        <div class="flex">
+            <input type="text" name="url" placeholder="URL" required>
+        </div>
+        <p>url example: parimatch-epic-battle</p>
+    </div>
+
+    <label for="preview">Preview</label>
+    <input type="file" name="preview" id="preview">
+    <label for="background">Background</label>
+    <input type="file" name="background" id="background">
+    <label for="highlight">Highlight</label>
+    <input type="file" name="highlight" id="highlight">
+    <label for="video">Video</label>
+    <input type="file" name="video" id="video" required>
+
+    <div class="divider"></div>
+
+    <div id="credits-list">
+        <div class="credit-entry flex">
+            <label class="custom-checkbox-pro">
+                <input type="checkbox" name="credit_is_fav[]">
+                <span class="checkmark"></span>
+            </label>
+            <input type="text" name="credit_names[]" placeholder="Name">
+            <input type="text" name="credit_roles[]" placeholder="Role">
+            <button type="button" class="remove-credit">✕</button>
+        </div>
+    </div>
+    <button type="button" id="add-credit">ADD ROLE</button>
+
+    <input type="submit" value="SUBMIT">
+</form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script>
+$(function() {
+    $('#add-credit').on('click', function() {
+        const creditHTML = `
+            <div class="credit-entry flex">
+                <label class="custom-checkbox-pro">
+                    <input type="checkbox" name="credit_is_fav[]">
+                    <span class="checkmark"></span>
+                </label>
+                <input type="text" name="credit_names[]" placeholder="Name">
+                <input type="text" name="credit_roles[]" placeholder="Role">
+                <button type="button" class="remove-credit">✕</button>
+            </div>
+        `;
+        $('#credits-list').append(creditHTML);
+    });
+
+    $('#credits-list').on('click', '.remove-credit', function() {
+        $(this).closest('.credit-entry').remove();
+    });
+});
+</script>
+
+
+{% endblock content %}
