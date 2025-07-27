@@ -11,7 +11,12 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="content">
+    <header>
+        <a href="/">HOME</a>
+        <a href="/contact">CONTACT</a>
+    </header>
+
+    <div class="content home active">
         <div class="image">
             <img class="video-img" src="static/images/showreel.png">
             <div class="video-text absolute bottom left">
@@ -21,6 +26,38 @@
                 DOP: Evgeniy Usanov
                 1st AD: Alina Krasnyans’ka
             </div>
+            <div class="extend absolute center">PLAY</div>
+        </div>
+        <div class="info">
+            <div class="video"><span></span></div>
+            <div class="video"><span></span></div>
+
+            <div class="video view" data-url="showreel.png" data-text="Creative Agency: ESF\nDirector: KOLBASA">
+                <span class="num">#0</span>
+                <span>Showreel</span>
+            </div>
+            <div class="video view" data-url="robot.png" data-text="Creative Agency: ESF\nDirector: VLAD">
+                <span class="num">#0</span>
+                <span>Robot</span>
+            </div>
+            <div class="video"><span></span></div>
+            <div class="video view" data-url="robot.png" data-text="Creative Agency: ESF\nDirector: VLAD">
+                <span class="num">#0</span>
+                <span>Robot</span>
+            </div>
+    </div>
+
+    <div class="content contact">
+        <div class="image">
+            <img class="video-img" src="static/images/showreel.png">
+            <div class="video-text absolute bottom left">
+                Creative Agency:  SHOTS
+                Production: Electric Sheep Film
+                Director: Eugene Krasulya
+                DOP: Evgeniy Usanov
+                1st AD: Alina Krasnyans’ka
+            </div>
+            <div class="extend absolute center">EXTEND</div>
         </div>
         <div class="info">
             <div class="video" data-url="showreel.png" data-text="Creative Agency: ESF\nDirector: KOLBASA">
@@ -34,33 +71,50 @@
         </div>
     </div>
 </body>
+
+
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
 <script>
-$('.video').each(function(index) {
-  $(this).find('.num').text('#' + index);
 
-  const randomPadding = Math.floor(Math.random() * 401) + 100 + 'px';
-  $(this).find('span:not(.num)').css('padding-right', randomPadding);
-});
-$('.video').hover(function() {
-    const imageUrl = $(this).data('url');
-    const text = $(this).data('text');
-    const $img = $('.video-img');
-    const currentSrc = $img.attr('src').replace('static/images/', '');
-    
-    if (imageUrl && imageUrl !== currentSrc) {
-        $img.addClass('hidden');
+    $('.video').each(function(index) {
+        $(this).find('.num').text('#' + index);
 
-        setTimeout(() => {
-        $img.attr('src', 'static/images/' + imageUrl);
-        $img.removeClass('hidden');
-        }, 200);
-    }
+        const randomPadding = Math.floor(Math.random() * 201) + 100 + 'px';
+        $(this).find('span:not(.num)').css('padding-right', randomPadding);
+    });
 
-    if (text) {
-        $('.video-text').html(text.replace(/\n/g, '<br>'));
-    }
-});
+    let $activeVideo = null;
+
+    $('.video').hover(function() {
+        const imageUrl = $(this).data('url');
+        const text = $(this).data('text');
+        const $img = $('.video-img');
+
+        if (!$activeVideo || $activeVideo.data('url') !== imageUrl) {
+            if ($activeVideo) {
+                $activeVideo.removeClass('active');
+            }
+
+            $(this).addClass('active');
+            $activeVideo = $(this);
+
+            if ($(this).hasClass('view')) {
+                $img.addClass('hidden');
+
+                setTimeout(() => {
+                    $img.attr('src', 'static/images/' + imageUrl);
+                    $img.removeClass('hidden');
+                }, 200);
+
+                if (text) {
+                    $('.video-text').html(text.replace(/\n/g, '<br>'));
+                }
+            }
+        }
+    });
+
 </script>
+
 
 </html>
