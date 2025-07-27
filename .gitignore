@@ -4,6 +4,8 @@
 /static/highlights/
 /static/previews/
 
+ngrok.exe
+
 # MacOS
 .DS_Store
 
