@@ -8,17 +8,26 @@
     Over the years, we’ve built up strong experience working with international brands like McDonald’s, Pepsi, and Parimatch, and we’ve had the chance to collaborate with some of the biggest names in sports — including football stars from Chelsea and Juventus.
     Whether we’re shooting in Kyiv, London, or elsewhere, our goal is always the same: to bring bold ideas to life with strong visuals, smooth production, and attention to every detail.">
 
-    <link rel="stylesheet" href="style.css">
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <link rel="stylesheet" href="static/home.css">
 </head>
 <body>
     <header>
-        <a href="/">HOME</a>
+        <a href="/" class="active">HOME</a>
+        <a href="/about">ABOUT</a>
         <a href="/contact">CONTACT</a>
+        <div class="divider">
+            <span>|</span>
+        </div>
+        <button id="volume">
+            <img src="/static/icons/volume-off.svg" alt="VOLUME">
+        </button>
     </header>
+
 
     <div class="content home active">
         <div class="image">
-            <img class="video-img" src="static/images/showreel.png">
+            <video id="main-video" autoplay playsinline muted></video>
             <div class="video-text absolute bottom left">
                 Creative Agency:  SHOTS
                 Production: Electric Sheep Film
@@ -26,26 +35,78 @@
                 DOP: Evgeniy Usanov
                 1st AD: Alina Krasnyans’ka
             </div>
-            <div class="extend absolute center">PLAY</div>
-        </div>
-        <div class="info">
-            <div class="video"><span></span></div>
-            <div class="video"><span></span></div>
+            <div id="play" class="extend absolute center left">
+                <div class="info">
+                    <img src="static/icons/play.svg">
+                    PLAY
+                </div>
+            </div>
 
-            <div class="video view" data-url="showreel.png" data-text="Creative Agency: ESF\nDirector: KOLBASA">
+            <div id="to-all-videos" class="extend absolute center right hidden">
+                <div class="info">
+                    <img src="static/icons/arrow-right.svg">
+                    ALL VIDEOS
+                </div>
+            </div>
+            <div id="back" class="extend absolute center right hidden">
+                <div class="info">
+                    <img src="static/icons/arrow-right.svg">
+                    BACK
+                </div>
+            </div>
+            <div id="info" class="extend absolute center left hidden">
+                <div class="info">
+                    <img src="static/icons/info.svg">
+                    INFO
+                </div>
+            </div>
+
+            <div id="hide-info" class="extend absolute fill invisible center hidden">
+                <div class="info">
+                    <img src="static/icons/play.svg">
+                    Hide info
+                </div>
+            </div>
+        </div>
+
+        <!-- <div class="video-info">
+            <div class="video clear" data-url="parimatch_epic_battle" data-text="Creative Agency: ESF\nDirector: KOLBASA">
                 <span class="num">#0</span>
                 <span>Showreel</span>
             </div>
-            <div class="video view" data-url="robot.png" data-text="Creative Agency: ESF\nDirector: VLAD">
+        </div> -->
+
+        <div class="video-row all-videos">
+            <div class="video clear"><span></span></div>
+            <div class="video clear"><span></span></div>
+
+            <div class="video view" data-url="parimatch_epic_battle" data-text="Creative Agency: ESF\nDirector: KOLBASA">
+                <span class="num">#0</span>
+                <span>Showreel</span>
+            </div>
+            <div class="video view" data-url="parimatch_usyk_monster" data-text="Creative Agency: ESF\nDirector: VLAD">
                 <span class="num">#0</span>
                 <span>Robot</span>
             </div>
-            <div class="video"><span></span></div>
-            <div class="video view" data-url="robot.png" data-text="Creative Agency: ESF\nDirector: VLAD">
+            <div class="video clear"><span></span></div>
+            <div class="video view" data-url="parimatch_esports_bro_fist" data-text="Creative Agency: ESF\nDirector: VLAD">
                 <span class="num">#0</span>
-                <span>Robot</span>
+                <span>Robot 2</span>
             </div>
-    </div>
+        </div>
+
+        <div class="video-row video-info">
+            <div class="video clear"><span></span></div>
+            <div class="video clear"><span></span></div>
+            <div class="video clear"><span></span></div>
+
+            <div class="video" data-url="parimatch_epic_battle" data-text="Creative Agency: ESF\nDirector: KOLBASA">
+                <span class="num">Producer:</span>
+                <span>Ivan</span>
+            </div>
+            <div class="video clear"><span></span></div>
+            <div class="video clear"><span></span></div>
+        </div>
 
     <div class="content contact">
         <div class="image">
@@ -57,7 +118,6 @@
                 DOP: Evgeniy Usanov
                 1st AD: Alina Krasnyans’ka
             </div>
-            <div class="extend absolute center">EXTEND</div>
         </div>
         <div class="info">
             <div class="video" data-url="showreel.png" data-text="Creative Agency: ESF\nDirector: KOLBASA">
@@ -73,48 +133,265 @@
 </body>
 
 
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script>
+    let $activeVideo = null;
+    let videoCache = {};
+    let videoOrder = [];
+    let videoCacheSize = 0;
+    let isMuted = true;
+    let isPlaying = false;
+    let state = 'all-videos';
+
+    const MAX_CACHE_SIZE = 5000 * 1024 * 1024;
+
+    function setVideoIndices() {
+        $('.all-videos .video').not('.clear').each(function(index) {
+            $(this).find('.num').text('#' + index);
+        });
+    }
+
+    function createRandomPadding() {
+        $('.video').each(function() {
+            const randomPadding = Math.floor(Math.random() * 201) + 100 + 'px';
+            $(this).find('span:not(.num)').css('padding-right', randomPadding);
+        });
+    }
+
+    function formatMultilineText(text) {
+        return String(text).replace(/\\n/g, '<br>');
+    }
+
+    function createOrGetVideo(url) {
+        if (videoCache[url]) {
+            const cachedVideo = videoCache[url];
+            cachedVideo.muted = isMuted;
+            cachedVideo.volume = isMuted ? 0 : 0.5;
+            return cachedVideo;
+        }
+        const video = document.createElement('video');
+        video.src = 'static/videos/' + url + '.mp4';
+        video.autoplay = true;
+        video.muted = true; // временный фикс
+        video.setAttribute('playsinline', true);
+        video.preload = 'auto';
+        video.style.width = '100%';
+        video.style.height = '100%';
+        video.style.objectFit = 'cover';
+        const approxSize = 50 * 1024 * 1024;
+        videoCache[url] = video;
+        videoOrder.push(url);
+        videoCacheSize += approxSize;
+        
+        return video;
+    }
+
+    function cleanupVideoCache() {
+        while (videoCacheSize > MAX_CACHE_SIZE && videoOrder.length > 0) {
+            const oldestUrl = videoOrder.shift();
+            const video = videoCache[oldestUrl];
+            if (video) {
+                video.remove();
+                delete videoCache[oldestUrl];
+                videoCacheSize -= 50 * 1024 * 1024;
+            }
+        }
+    }
+
+    function stopAllVideos() {
+        Object.values(videoCache).forEach(video => {
+            video.pause();
+            video.currentTime = 0;
+        });
+        const mainVideo = document.getElementById('main-video');
+        if (mainVideo) {
+            mainVideo.pause();
+            mainVideo.currentTime = 0;
+        }
+    }
+
+    setVideoIndices();
+    createRandomPadding();
+</script>
 
 <script>
-
-    $('.video').each(function(index) {
-        $(this).find('.num').text('#' + index);
-
-        const randomPadding = Math.floor(Math.random() * 201) + 100 + 'px';
-        $(this).find('span:not(.num)').css('padding-right', randomPadding);
-    });
-
-    let $activeVideo = null;
-
-    $('.video').hover(function() {
-        const imageUrl = $(this).data('url');
-        const text = $(this).data('text');
-        const $img = $('.video-img');
-
-        if (!$activeVideo || $activeVideo.data('url') !== imageUrl) {
+    function handleVideoHover($element) {
+        const url = $element.data('url');
+        const text = $element.data('text');
+        const mainVideo = document.getElementById('main-video');
+        
+        if (!$activeVideo || $activeVideo.data('url') !== url) {
             if ($activeVideo) {
                 $activeVideo.removeClass('active');
             }
-
-            $(this).addClass('active');
-            $activeVideo = $(this);
-
-            if ($(this).hasClass('view')) {
-                $img.addClass('hidden');
-
+            $element.addClass('active');
+            $activeVideo = $element;
+            if ($element.hasClass('view')) {
+                if (mainVideo.src && mainVideo.src.includes(url)) {
+                    if (text) {
+                        $('.video-text').html(formatMultilineText(text));
+                    }
+                    return;
+                }
+                isPlaying = true;
+                stopAllVideos();
+                mainVideo.currentTime = 0;
+                $(mainVideo).addClass('hidden');
                 setTimeout(() => {
-                    $img.attr('src', 'static/images/' + imageUrl);
-                    $img.removeClass('hidden');
+                    if (!isPlaying) return;
+                    const video = createOrGetVideo(url);
+                    mainVideo.src = video.src;
+                    mainVideo.muted = isMuted;
+                    mainVideo.volume = isMuted ? 0 : 0.5;
+                    mainVideo.currentTime = 0;
+                    $(mainVideo).removeClass('hidden');
+                    mainVideo.play().then(() => {
+                        isPlaying = false;
+                    }).catch(e => {
+                        isPlaying = false;
+                    });
                 }, 200);
-
                 if (text) {
-                    $('.video-text').html(text.replace(/\n/g, '<br>'));
+                    $('.video-text').html(formatMultilineText(text));
                 }
             }
         }
+    }
+
+    function bindHoverHandlers() {
+        $('.video:not(.clear)').hover(function() {
+            handleVideoHover($(this));
+        });
+    }
+
+    bindHoverHandlers();
+    handleVideoHover($('.video:not(.clear)').first());
+</script>
+
+<script>
+    $('#volume').on('click', function () {
+        isMuted = !isMuted;
+        const video = document.getElementById('main-video');
+        if (video) {
+            video.muted = isMuted;
+            video.volume = isMuted ? 0 : 0.5;
+        }
+        const iconOff = '<img src="static/icons/volume-off.svg" alt="VOLUME OFF">';
+        const iconOn = '<img src="static/icons/volume-on.svg" alt="VOLUME ON">';
+        $(this).html(isMuted ? iconOff : iconOn);
     });
+</script>
+
+<script>
+    function getRandomizedOrder(length) {
+        const indices = Array.from({length}, (_, i) => i);
+        for (let i = indices.length - 1; i > 0; i--) {
+            if (Math.random() < 0.5) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [indices[i], indices[j]] = [indices[j], indices[i]];
+            }
+        }
+        return indices;
+    }
+
+    function animateRow($container, direction = 'in') {
+        const $elems = $container.find('.video, .clear');
+        const order = getRandomizedOrder($elems.length);
+
+        const transformValue = {
+            in: 'translateX(0)',
+            outLeft: 'translateX(-100vw)',
+            outRight: 'translateX(100vw)'
+        }[direction];
+
+        const opacityValue = direction === 'in' ? 1 : 0;
+
+        $elems.each(function(i) {
+            setTimeout(() => {
+                $(this).css({
+                    transform: transformValue,
+                    opacity: opacityValue
+                });
+            }, order[i] * 80);
+        });
+    }
+
 
 </script>
 
+<script>
+    function setState(newState) {
+        state = newState;
 
-</html>
+        all_videos = $('.all-videos');
+        video_info = $('.video-info');
+
+        all_videos.removeClass('active');
+        video_info.removeClass('active');
+
+        extend = $('.extend');
+        to_all_videos = $('#to-all-videos');
+        play = $('#play');
+        back = $('#back');
+        info = $('#info');
+        hide_info = $('#hide-info');
+
+        extend.addClass('hidden');
+        
+        switch (state) {
+            case 'landing-active':
+                to_all_videos.removeClass('hidden');
+
+                animateRow(all_videos, 'outRight');
+                handleVideoHover($('.video.view').first());
+
+                break;
+
+            case 'all-videos':
+                play.removeClass('hidden');
+                all_videos.addClass('active');
+
+                animateRow(all_videos, 'in');
+                animateRow(video_info, 'outLeft');
+
+                break;
+
+            case 'view-video':
+                back.removeClass('hidden');
+                info.removeClass('hidden');
+
+                animateRow(all_videos, 'outRight');
+                animateRow(video_info, 'outLeft');
+
+                break;
+
+            case 'view-info':
+                back.removeClass('hidden');
+                hide_info.removeClass('hidden');
+
+                video_info.addClass('active');
+                all_videos.removeClass('active');
+
+                animateRow(all_videos, 'outRight');  
+                animateRow(video_info, 'in');
+                
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    $('.video.view, #play, #hide-info').on('click', () =>
+    setState('view-video'));
+    
+    $('#back, #to-all-videos').on('click', () =>
+    setState('all-videos'));
+
+    $('#info').on('click', () =>
+    setState('view-info'));
+
+
+    setState('landing-active');
+</script>
+
+</html></html>
