@@ -32,7 +32,7 @@ def login_required(f):
 def index():
     videos = db.video_get()
     featured_videos = db.video_get()
-    return render_template('new.html', videos=videos, featured_videos=featured_videos)
+    return render_template('index.html', videos=videos, featured_videos=featured_videos)
 
 
 
