@@ -10,6 +10,74 @@ body{
     overflow-x: hidden;
 }
 
+*{
+    cursor: none !important;
+}
+
+.custom-cursor {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-color: rgba(255, 255, 255, 0.8);
+    pointer-events: none;
+    z-index: 30;
+    transition: all 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
+    mix-blend-mode: difference;
+    transform: translate(-50%, -50%);
+}
+
+.custom-cursor.morphing {
+    mix-blend-mode: normal;
+    /* border: 3px solid rgba(255, 255, 255, 0.4); */
+    background-color: rgba(0, 0, 0, 0.42) !important;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) background-color 0s ease;
+}
+
+.cursor-hover {
+    position: relative;
+}
+
+.cursor-hover {
+    transition: all 0.4s ease;
+}
+
+/* 
+.cursor-hover:hover {
+    backdrop-filter: initial;
+    background: white !important;
+    margin-left: -50px;
+    color: black !important;
+} */
+
+.custom-cursor-helper {
+    position: absolute;
+    z-index: 9999;
+
+    pointer-events: none;
+    height: 10px;
+    background: rgba(255, 255, 255, 1);
+    mix-blend-mode: difference;
+
+    transform: translate(-50%, -50%);
+    opacity: 1;
+    width: 10px;
+
+}
+
+.custom-cursor-helper {
+
+    scale: 1;
+    opacity: 1;
+
+    transition: scale 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) opacity 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.custom-cursor-helper.hidden {
+    opacity: 0;
+    scale: 0;
+}
+
+
 
 
 
@@ -21,7 +89,7 @@ button{
     border: none;
     background-color: transparent;
 
-    cursor: pointer;
+    /* cursor: pointer; */
 }
 
 .content{
@@ -73,7 +141,7 @@ button{
         left: 0;
         width: 100vw;
         height: 100vh;
-        cursor: pointer;
+        /* cursor: pointer; */
         
         transition: background-color 0.3s;
     }
@@ -224,7 +292,7 @@ header {
 
         opacity: 0.2;
 
-        cursor: grab;
+        /* cursor: grab; */
 
         span{
             display: block;
@@ -294,7 +362,7 @@ video {
 
         color: white;
         background-color: black;
-        cursor: pointer;
+        /* cursor: pointer; */
 
 
         span{
