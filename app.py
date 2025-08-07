@@ -18,6 +18,7 @@ create_app(app)
 
 app.secret_key = 'localtesting'
 
+
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -34,6 +35,8 @@ def login_required(f):
 def index():
     videos = db.video_get()
     featured_videos = db.video_get()
+    for video in videos:
+        video.credits_text = db.get_credits(video)
     return render_template('index.html', videos=videos, featured_videos=featured_videos)
 
 

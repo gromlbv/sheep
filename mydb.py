@@ -62,3 +62,16 @@ def get_below_video(video):
 
 def swap_orders(video1, video2):
     video1.order, video2.order = video2.order, video1.order
+
+
+def get_credits(video):
+    credits = video.credits
+    if not credits:
+        return ""
+    
+    credit_lines = []
+    for credit in credits:
+        line = f"{credit.role}: {credit.name}"
+        credit_lines.append(line)
+    
+    return "\\n".join(credit_lines)
