@@ -7,6 +7,8 @@ from models import db as database
 from mysecurity import verify, decode, post_login, is_loggined
 from files import upload 
 
+from tools import *
+
 from functools import wraps
 from datetime import datetime
 
@@ -50,6 +52,7 @@ def pro():
 def add():
     return render_template('add.html')
 
+
 @app.post('/pro/add')
 @login_required
 def video_add_post():
@@ -79,11 +82,16 @@ def video_add_post():
     
     video = db.create_video(title, description, url, is_featured, max_order + 1)
     
-    roles = request.form.getlist("credit_roles[]")
-    names = request.form.getlist("credit_names[]")
-    favs = request.form.getlist("credit_is_fav[]")
+    credits_single_input = request.form.get('credits_single_input')
+    if credits_single_input:
+        roles, names, favs = parse_credits_input(credits_single_input)
+    else:
+        roles = request.form.getlist("credit_roles[]")
+        names = request.form.getlist("credit_names[]")
+        favs = request.form.getlist("credit_is_fav[]")
+
     db.create_credits(video, roles, names, favs)
-    
+
     database.session.commit()
     return redirect(url_for('pro'))
 
@@ -148,4 +156,4 @@ from sqlalchemy import desc
 if __name__ == "__main__":
     with app.app_context():
         create_tables()
-    app.run(debug=True, port=5200, host='0.0.0.0')
+    app.run(debug=True, port=5400, host='0.0.0.0')
