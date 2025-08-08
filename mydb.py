@@ -75,3 +75,13 @@ def get_credits(video):
         credit_lines.append(line)
     
     return "\\n".join(credit_lines)
+def get_credits_simple(video):
+    credits = video.credits
+    if not credits:
+        return ""
+    
+    credit_strings = []
+    for credit in credits:
+        credit_strings.append(f"{credit.role}|{credit.name}")
+    
+    return "||".join(credit_strings)

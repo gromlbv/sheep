@@ -37,6 +37,7 @@ def index():
     featured_videos = db.video_get()
     for video in videos:
         video.credits_text = db.get_credits(video)
+        video.credits_simple = db.get_credits_simple(video)
     return render_template('index.html', videos=videos, featured_videos=featured_videos)
 
 
@@ -152,9 +153,6 @@ def logout():
         flash("YOU'RE NOT AN ADMIN NOW")
 
     return redirect(url_for('index'))
-
-
-from sqlalchemy import desc
 
 if __name__ == "__main__":
     with app.app_context():

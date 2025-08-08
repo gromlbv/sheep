@@ -161,6 +161,13 @@ button{
     .video-text{
         font-size: 14px;
         padding: 48px;
+        
+        transition: opacity 0.3s, transform 0.3s;
+    }
+    .video-text.hidden{
+        opacity: 0;
+        transform: translateX(-100%);
+        pointer-events: none;
     }
     .extend{
         z-index: 5;
