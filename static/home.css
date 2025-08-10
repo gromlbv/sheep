@@ -169,7 +169,7 @@ button{
 
 .extend{
     position: fixed;
-    z-index: 5;
+    z-index: 10;
     
     display: flex;
     align-items: center;
@@ -232,7 +232,7 @@ button{
 }
 .extend.invisible{
     opacity: 0 !important;
-    z-index: 3 !important;
+    z-index: 4 !important;
 }
 
 
@@ -349,7 +349,7 @@ video {
 .video-row{
     position: absolute;
     right: 0;
-    z-index: 3;
+    z-index: 5;
     
     display: flex;
     align-items: flex-end;
@@ -359,7 +359,7 @@ video {
     min-height: 100vh;
 
     .video{
-        z-index: 3;
+        z-index: 5;
 
         display: flex;
         align-items: center;
@@ -435,11 +435,16 @@ video {
 
     transition: transform 0.2s;
 
+
     .video{
         transform: translateX(-100vw);
     }
     .video:not(.clear){
-         background-color: #C7C8C3;
+        background-color: #C7C8C3;
         color: black;
+
+        span:not(.num){
+            padding-right: 120px;
+        }
     }
 }

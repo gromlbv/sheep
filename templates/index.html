@@ -95,6 +95,7 @@
             <div class="video clear"><span></span></div>
             <div class="video"><span>Something probably went wrong...</span></div>
             <div class="video clear"><span></span></div>
+            <div class="video clear"><span></span></div>
         </div>
 
     <div class="content contact">
@@ -145,6 +146,8 @@
             $(this).find('span:not(.num)').css('padding-right', randomPadding);
         });
     }
+
+
 
     function formatMultilineText(text) {
         return String(text).replace(/\\n/g, '<br>');
@@ -221,19 +224,15 @@
             const $thirdClear = $videoInfo.find('.video.clear').eq(2);
             
             creditsArray.forEach((credit, index) => {
+                const randomPadding = Math.floor(Math.random() * 201) + 100 + 'px';
                 const $newVideo = $(`
                     <div class="video">
                         <span class="num">${credit.role}:</span>
-                        <span>${credit.name}</span>
+                        <span style="padding-right: ${randomPadding}">${credit.name}</span>
                     </div>
                 `);
                 
                 $thirdClear.after($newVideo);
-                
-                if (index < creditsArray.length - 1) {
-                    const $clearElement = $('<div class="video clear"><span></span></div>');
-                    $newVideo.after($clearElement);
-                }
             });
         }
     }
