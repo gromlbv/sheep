@@ -28,7 +28,6 @@ body{
 
 .custom-cursor.morphing {
     mix-blend-mode: normal;
-    /* border: 3px solid rgba(255, 255, 255, 0.4); */
     background-color: rgba(0, 0, 0, 0.42) !important;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) background-color 0s ease;
 }
@@ -41,13 +40,6 @@ body{
     transition: all 0.4s ease;
 }
 
-/* 
-.cursor-hover:hover {
-    backdrop-filter: initial;
-    background: white !important;
-    margin-left: -50px;
-    color: black !important;
-} */
 
 .custom-cursor-helper {
     position: absolute;
@@ -65,11 +57,10 @@ body{
 }
 
 .custom-cursor-helper {
-
     scale: 1;
     opacity: 1;
 
-    transition: scale 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) opacity 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: scale 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .custom-cursor-helper.hidden {
@@ -146,22 +137,24 @@ button{
         transition: background-color 0.3s;
     }
     .absolute.center.left{
-        width: 20vw;
+        width: 10vw;
     }
     .absolute.center.right{
         align-items: flex-end;
-        width: 20vw;
         left: initial;
         right: 0;
+        width: 10vw;
     }
     .absolute.center:hover{
         background-color: rgba(0, 0, 0, 0.2);
     }
 
     .video-text{
-        font-size: 14px;
         padding: 48px;
-        
+
+        mix-blend-mode: difference;
+        font-size: 14px;
+
         transition: opacity 0.3s, transform 0.3s;
     }
     .video-text.hidden{
@@ -169,77 +162,87 @@ button{
         transform: translateX(-100%);
         pointer-events: none;
     }
-    .extend{
-        z-index: 5;
+    
+}
 
-        padding: 48px 64px;
 
-        .info{
-            position: relative;
 
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 12px;
+.extend{
+    position: fixed;
+    z-index: 5;
+    
+    display: flex;
+    align-items: center;
 
-            transform: translateX(300%);
-            transition: transform 0.3s;
-        }
+    top: 0;
+    width: 15vw;
+    height: 100vh;
+    padding: 48px 64px;
 
-        img{
-            height: 68px;
-            width: fit-content;
-            object-fit: fill;
-            transition: height 0.3s ease;
-        }
+    .info{
+        position: relative;
+        top: 0;
 
-        .text{
-            font-size: 16px;
-            color: white;
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            transition: all 0.3s ease;
-        }
-    }
-    .extend.left, .extend.left-sided{
-        .info{
-            transform: translateX(-300%);
-        }
-    }
-    .extend:hover{
-        .info{
-            transform: translateX(0);
-        }
-    }
-    .extend.hidden{
-        opacity: 0;
-        pointer-events: none;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+
+        color: white;
+
+        transition: transform 0.3s;
     }
 
-    .extend.left .text {
-        left: 0;
-        text-align: left;
+    img{
+        height: 68px;
+        width: fit-content;
+        object-fit: fill;
+        transition: height 0.3s ease;
     }
-    .extend.right .text {
-        right: 0;
-        left: auto;
-        text-align: right;
-    }
-    .extend.left .info {
+}
+.extend.left{
+    left: 0;
+    justify-content: flex-start;
+
+    .info{
+        transform: translateX(-300%);
         align-items: flex-start;
     }
-    .extend.right .info {
+}
+.extend.right{
+    right: 0;
+    justify-content: flex-end;
+
+    .info{
+        transform: translateX(300%);
         align-items: flex-end;
     }
+}
+.extend.fill{
+    width: 100%;
+}
+.extend:hover{
+    .info{
+        transform: translateX(0);
+    }
+}
+.extend.hidden{
+    opacity: 0;
+    pointer-events: none;
+}
+.extend.invisible{
+    opacity: 0 !important;
+    z-index: 3 !important;
+}
 
-    .absolute.fill{
-        width: 100vw;
-    }
-    .absolute.invisible{
-        opacity: 0 !important;
-        z-index: 0;
-    }
+
+
+.absolute.fill{
+    width: 100vw;
+}
+.absolute.invisible{
+    opacity: 0 !important;
+    z-index: 0;
 }
 
 header {
@@ -409,12 +412,21 @@ video {
     transition: transform 0.6s cubic-bezier(0.77,0,0.18,1), opacity 0.6s cubic-bezier(0.77,0,0.18,1) !important;
 }
 
+.video:focus, .extend:focus {
+    outline: 2px solid white;
+    outline-offset: 2px;
+}
+
+.video:focus span.num{
+    padding-right: 130px;
+}
+
 .video-info{
     pointer-events: none;
 
     align-items: flex-start;
 
-    position: fixed;
+    position: absolute;
     left: 0;
     top: 0;
     z-index: 5;

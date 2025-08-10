@@ -39,33 +39,33 @@
                 DOP: LOADING <br>
                 1st AD: LOADING <br>
             </div>
-            <div id="play" class="extend absolute center left cursor-hover">
+            <div id="play" class="extend left cursor-hover" role="button" aria-label="Play video">
                 <div class="info">
                     <img src="static/icons/play.svg">
                     PLAY
                 </div>
             </div>
 
-            <div id="to-all-videos" class="extend absolute center right hidden cursor-hover">
+            <div id="to-all-videos" class="extend right hidden cursor-hover" role="button" aria-label="View all videos">
                 <div class="info">
                     <img src="static/icons/arrow-right.svg">
                     ALL VIDEOS
                 </div>
             </div>
-            <div id="back" class="extend absolute center right hidden cursor-hover">
+            <div id="back" class="extend right hidden cursor-hover" role="button" aria-label="Go back">
                 <div class="info">
                     <img src="static/icons/arrow-right.svg">
                     BACK
                 </div>
             </div>
-            <div id="info" class="extend absolute center left hidden cursor-hover">
+            <div id="info" class="extend left hidden cursor-hover" role="button" aria-label="Show video info">
                 <div class="info">
                     <img src="static/icons/info.svg">
                     INFO
                 </div>
             </div>
 
-            <div id="hide-info cursor-hover" class="extend absolute fill invisible center hidden">
+            <div id="hide-info" class="extend fill invisible hidden cursor-hover">
                 <div class="info">
                     <img src="static/icons/play.svg">
                     Hide info
@@ -79,9 +79,9 @@
             <div class="video clear"><span></span></div>
 
             {% for video in videos %}
-                <div class="cursor-hover video view" data-url="{{ video.url }}" data-credits="{{ video.credits_text }}" data-credits-simple="{{ video.credits_simple }}">
+                <div class="cursor-hover video view" data-url="{{ video.url }}" data-credits="{{ video.credits_text }}" data-credits-simple="{{ video.credits_simple }}" tabindex="0" role="button" aria-label="Play {{ video.title }}">
                     <span class="num">#0</span>
-                    <span>{{ video.url }}</span>
+                    <span>{{ video.title }}</span>
                 </div>
             {% endfor %}
 
@@ -109,11 +109,11 @@
             </div>
         </div>
         <div class="info">
-            <div class="video" data-url="showreel.png" data-credits="Creative Agency: ESF\nDirector: KOLBASA">
+            <div class="video" data-url="showreel.png" data-credits="Creative Agency: ESF\nDirector: KOLBASA" tabindex="0" role="button" aria-label="Play Showreel">
                 <span class="num">#0</span>
                 <span>Showreel</span>
             </div>
-            <div class="video" data-url="robot.png" data-credits="Creative Agency: ESF\nDirector: VLAD">
+            <div class="video" data-url="robot.png" data-credits="Creative Agency: ESF\nDirector: VLAD" tabindex="0" role="button" aria-label="Play Robot">
                 <span class="num">#0</span>
                 <span>Robot</span>
             </div>
@@ -324,14 +324,46 @@
     function animateRow($container, direction = 'in') {
         const $elems = $container.find('.video, .clear');
         const order = getRandomizedOrder($elems.length);
+        
+        const totalDuration = 2000;
+        const maxDelay = totalDuration / $elems.length;
+        const delayBetweenElements = Math.min(maxDelay, 150);
 
         const transformValue = {
             in: 'translateX(0)',
+            inLeft: 'translateX(0)',
+            inRight: 'translateX(0)',
             outLeft: 'translateX(-100vw)',
             outRight: 'translateX(100vw)'
         }[direction];
 
-        const opacityValue = direction === 'in' ? 1 : 0;
+        const opacityValue = direction.startsWith('in') ? 1 : 0;
+
+        const isAlreadyInTargetState = direction.startsWith('in') ? 
+            $elems.first().css('opacity') === '1' && $elems.first().css('transform') === 'translateX(0px)' :
+            $elems.first().css('opacity') === '0' || 
+            $elems.first().css('transform') === 'translateX(-100vw)' || 
+            $elems.first().css('transform') === 'translateX(100vw)';
+
+        if (isAlreadyInTargetState) {
+            return;
+        }
+
+        let initialTransform;
+        if (direction === 'inLeft') {
+            initialTransform = 'translateX(-100vw)';
+        } else if (direction === 'inRight') {
+            initialTransform = 'translateX(100vw)';
+        } else if (direction === 'in') {
+            initialTransform = 'translateX(-100vw)';
+        } else {
+            initialTransform = 'translateX(0)';
+        }
+
+        $elems.css({
+            transform: initialTransform,
+            opacity: direction.startsWith('in') ? 0 : 1
+        });
 
         $elems.each(function(i) {
             setTimeout(() => {
@@ -339,7 +371,7 @@
                     transform: transformValue,
                     opacity: opacityValue
                 });
-            }, order[i] * 80);
+            }, order[i] * delayBetweenElements);
         });
     }
 
@@ -381,7 +413,7 @@
                 video_text.removeClass('hidden');
                 all_videos.addClass('active');
 
-                animateRow(all_videos, 'in');
+                animateRow(all_videos, 'inRight');
                 animateRow(video_info, 'outLeft');
 
                 break;
@@ -404,7 +436,7 @@
                 all_videos.removeClass('active');
 
                 animateRow(all_videos, 'outRight');  
-                animateRow(video_info, 'in');
+                animateRow(video_info, 'inLeft');
                 
                 break;
 
@@ -425,149 +457,7 @@
 
     setState('landing-active');
 </script>
-<script>
-    $(document).ready(function () {
-        const cursor = $('.custom-cursor');
-        const helperCursor = $('.custom-cursor-helper');
 
-        let isSticked = false;
-        let stickedElement = null;
+<script src="/static/js/mouse.js"></script>
 
-        let mouseX = 0, mouseY = 0;
-        $(document).mousemove(function (e) {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-        });
-
-        function animateCursor() {
-            if (!isSticked) {
-                cursor.css({
-                    left: mouseX,
-                    top: mouseY
-                });
-
-            }
-            helperCursor.css({
-                left: mouseX,
-                top: mouseY
-            });
-            if (isSticked && stickedElement && !document.body.contains(stickedElement)) {
-                isSticked = false;
-                stickedElement = null;
-
-                cursor.removeClass('morphing').css({
-                    width: '20px',
-                    height: '20px',
-                    borderRadius: '0',
-                    background: 'rgba(255, 255, 255, 0.8)',
-                    transform: 'translate(-50%, -50%)',
-                    clipPath: 'none',
-                    left: mouseX,
-                    top: mouseY
-                });
-
-                helperCursor.addClass('hidden');
-            }
-            requestAnimationFrame(animateCursor);
-        }
-        animateCursor();
-
-
-        $('.cursor-hover').on('mouseenter', function () {
-            const element = $(this);
-            const rect = this.getBoundingClientRect();
-            const customColor = element.data('color');
-            helperCursor.removeClass('hidden');
-
-            isSticked = true;
-            stickedElement = this;
-
-            const computedStyle = window.getComputedStyle(this);
-            const borderRadius = computedStyle.borderRadius;
-            const background = customColor || computedStyle.backgroundColor;
-            const transform = computedStyle.transform;
-            const clipPath = computedStyle.clipPath;
-
-            const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top + rect.height / 2;
-
-            cursor.addClass('morphing').css({
-                left: centerX,
-                top: centerY,
-                width: rect.width,
-                height: rect.height,
-                borderRadius: borderRadius,
-                transform: `translate(-50%, -50%) ${transform !== 'none' ? transform : ''}`,
-                clipPath: clipPath !== 'none' ? clipPath : 'none'
-            });
-        });
-
-        $('.cursor-hover').on('mouseleave', function (e) {
-            const rect = this.getBoundingClientRect();
-            const mouseX = e.clientX;
-            const mouseY = e.clientY;
-            helperCursor.addClass('hidden');
-
-            const buffer = 10;
-            const isOutside = mouseX < rect.left - buffer ||
-                mouseX > rect.right + buffer ||
-                mouseY < rect.top - buffer ||
-                mouseY > rect.bottom + buffer;
-
-            if (isOutside) {
-                isSticked = false;
-                stickedElement = null;
-
-                cursor.removeClass('morphing').css({
-                    width: '20px',
-                    height: '20px',
-                    borderRadius: '0',
-                    background: 'rgba(255, 255, 255, 0.8)',
-                    transform: 'translate(-50%, -50%)',
-                    clipPath: 'none',
-                    left: e.clientX,
-                    top: e.clientY
-                });
-            }
-        });
-
-        $(document).mousemove(function (e) {
-            if (isSticked && stickedElement) {
-                const rect = stickedElement.getBoundingClientRect();
-                const mouseX = e.clientX;
-                const mouseY = e.clientY;
-
-                const buffer = 20;
-                const isOutside = mouseX < rect.left - buffer ||
-                    mouseX > rect.right + buffer ||
-                    mouseY < rect.top - buffer ||
-                    mouseY > rect.bottom + buffer;
-
-                if (isOutside) {
-                    isSticked = false;
-                    stickedElement = null;
-
-                    cursor.removeClass('morphing').css({
-                        width: '20px',
-                        height: '20px',
-                        borderRadius: '0',
-                        background: 'rgba(255, 255, 255, 0.8)',
-                        transform: 'translate(-50%, -50%)',
-                        clipPath: 'none'
-                    });
-                }
-            }
-        });
-
-        $(document).mouseleave(function () {
-            cursor.css('opacity', '0');
-            isSticked = false;
-            stickedElement = null;
-        });
-
-        $(document).mouseenter(function () {
-            cursor.css('opacity', '1');
-        });
-    });
-</script>
 </html></html>
