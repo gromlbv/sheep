@@ -175,7 +175,7 @@ button{
     align-items: center;
 
     top: 0;
-    width: 15vw;
+    width: 12vw;
     height: 100vh;
     padding: 48px 64px;
 
@@ -366,9 +366,9 @@ video {
 
         padding-left: 24px;
         width: fit-content;
-        height: 54px;
+        height: 48px;
 
-        font-size: 16px;
+        font-size: 14px;
 
         color: white;
         background-color: black;
@@ -379,7 +379,7 @@ video {
             display: flex;
             align-items: center;
 
-            height: 54px;
+            height: 48px;
             width: fit-content;
             padding-right: 640px;
         }
