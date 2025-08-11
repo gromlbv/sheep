@@ -138,9 +138,6 @@
         <div class="progress-status" id="progressStatus">PREPARING FILES</div>
         
         <div class="chat-messages" id="chatMessages">
-            <div class="chat-header">
-                <h4>SERVER MESSAGES</h4>
-            </div>
             <div class="divider"></div>
             <div class="messages-container" id="messagesContainer"></div>
         </div>
@@ -374,10 +371,10 @@ $(function() {
                 $('#progressPercentage').text(Math.round(percentComplete) + '%');
                 
                 if (percentComplete < 100) {
-                    $('#progressStatus').text('LOADING FILES...');
+                    $('#progressStatus').text('UPLOADING FILES...');
                     updateButton(`UPLOADING: ${Math.round(percentComplete)}%`, true);
                 } else {
-                    $('#progressStatus').text('PROCESSING VIDEO (FFMPEG)...');
+                    $('#progressStatus').text('PROCESSING VIDEO (HandBrake)...');
                     updateButton('PROCESSING VIDEO...', true);
                 }
             }
