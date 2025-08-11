@@ -49,16 +49,8 @@
 
             <div class="flex">
                 <div class="item">
-                    <label for="background">Background</label>
-                    <img id="background" src="{{ url_for('static', filename='backgrounds/' + video.url) }}.webp">
-                </div>
-                <div class="item">
                     <label for="preview">Preview</label>
                     <img id="preview" src="{{ url_for('static', filename='previews/' + video.url) }}.webp">
-                </div>
-                <div class="item">
-                    <label for="highlight">Highlight</label>
-                    <img id="highlight" src="{{ url_for('static', filename='highlights/' + video.url) }}.webp">
                 </div>
                 <div class="item">
                     <label for="video">Video</label>

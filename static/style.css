@@ -70,8 +70,6 @@ body {
   gap: 12px;
   padding: 24px;
 
-
-
   .video {
     position: relative;
 
@@ -79,9 +77,14 @@ body {
 
     background-color: #303741;
 
-    h3,
-    p {
+    h3, p {
+      padding: 0;
       padding-left: 12px;
+    }
+    p{
+      font-size: 14px;
+      margin: 4px 0;
+      font-weight: 400;
     }
 
     .flex {
