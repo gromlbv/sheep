@@ -36,27 +36,29 @@
     {% if videos %} {% for video in videos %}
         <div class="video">
             <h3>{{ video.title }}</h3>
-            {% for credit in video.credits %}
-                <p>
-                    {% if credit.is_fav %}
-                    <img style="height: 16px;" src="{{ url_for('static', filename='/icons/pin-fill.svg') }}">
-                    {% else %}
-                    <img style="height: 16px;" src="{{ url_for('static', filename='/icons/pin-outline.svg') }}">
-                    {% endif %}
-                    <strong>{{ credit.role }}:</strong> {{ credit.name }}
-                </p>
-            {% endfor %}
+            <div class="flex gap-12">
 
-            <div class="flex">
-                <div class="item">
-                    <label for="preview">Preview</label>
-                    <img id="preview" src="{{ url_for('static', filename='previews/' + video.url) }}.webp">
+                <div class="flex-cl">
+                {% for credit in video.credits %}
+                    <p>
+                        {% if credit.is_fav %}
+                        <img style="height: 16px;" src="{{ url_for('static', filename='/icons/pin-fill.svg') }}">
+                        {% else %}
+                        <img style="height: 16px;" src="{{ url_for('static', filename='/icons/pin-outline.svg') }}">
+                        {% endif %}
+                        <strong>{{ credit.role }}:</strong> {{ credit.name }}
+                    </p>
+                {% endfor %}
                 </div>
-                <div class="item">
-                    <label for="video">Video</label>
-                    <video id="video" src="{{ url_for('static', filename='videos/' + video.url) }}.mp4" autoplay loop muted playsinline></video>
+                 
+                <div class="flex">
+                    <div class="item">
+                        <!-- <label for="video">Video</label> -->
+                        <video id="video" src="{{ url_for('static', filename='videos/' + video.url) }}.mp4" autoplay loop muted playsinline></video>
+                    </div>
                 </div>
             </div>
+
             <div class="absolute-btn">
                 <form action="/pro/up/{{ video.url }}" method="post">
                     <button type="submit">

@@ -82,9 +82,19 @@ body {
       padding-left: 12px;
     }
     p{
+      display: flex;
+
       font-size: 14px;
       margin: 4px 0;
       font-weight: 400;
+
+      strong{
+        flex: 1;
+      }
+
+      img{
+        width: 16px !important;
+      }
     }
 
     .flex {
