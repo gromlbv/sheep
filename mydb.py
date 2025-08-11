@@ -4,8 +4,6 @@ import files
 from sqlalchemy import desc
 from sqlalchemy import func
 
-
-
 def video_get():
     videos = Video.query.order_by(Video.order).all()
     return videos
@@ -17,11 +15,13 @@ def video_delete(url):
         db.session.delete(video)
         db.session.commit()
         return True
-    return False
+    else:
+        return False
     
 
 def get_max_video_order() -> int:
-    return db.session.query(func.max(Video.order)).scalar() or 0
+    max_order = db.session.query(func.max(Video.order)).scalar() or 0
+    return max_order
 
 def create_video(title: str, description: str, url: str, is_featured: bool, order: int) -> Video:
     video = Video(title=title, description=description, url=url, credits=[], is_featured=is_featured, order=order)
@@ -40,25 +40,29 @@ def create_credits(video, roles, names, favs) -> None:
                 video=video
             )
             db.session.add(credit)
+            
 
 def get_video_by_url(url):
-    return Video.query.filter_by(url=url).first_or_404()
+    video = Video.query.filter_by(url=url).first_or_404()
+    return video
 
 def get_above_video(video):
-    return (
+    above_video = (
         Video.query
         .filter(Video.order < video.order)
         .order_by(desc(Video.order))
         .first()
     )
+    return above_video
 
 def get_below_video(video):
-    return (
+    below_video = (
         Video.query
         .filter(Video.order > video.order)
         .order_by(Video.order)
         .first()
     )
+    return below_video
 
 def swap_orders(video1, video2):
     video1.order, video2.order = video2.order, video1.order
@@ -74,7 +78,9 @@ def get_credits(video):
         line = f"{credit.role}: {credit.name}"
         credit_lines.append(line)
     
-    return "\\n".join(credit_lines)
+    result = "\\n".join(credit_lines)
+    return result
+
 def get_credits_simple(video):
     credits = video.credits
     if not credits:
@@ -84,4 +90,5 @@ def get_credits_simple(video):
     for credit in credits:
         credit_strings.append(f"{credit.role}|{credit.name}")
     
-    return "||".join(credit_strings)
+    result = "||".join(credit_strings)
+    return result

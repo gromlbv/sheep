@@ -3,13 +3,34 @@
 
 
 {% block content %}
-<h1 class="pro-h1">ELECTRIC SHEEP FILM</h1>
 
-<div class="flex flex-center gap-6 pad-24">
+<div class="flex flex-center gap-6 pad-12 fixed">
+    <img src="{{ url_for('static', filename='images/logos/header.svg') }}" alt="logo" class="logo">
+
     <a class="pro-btn" href="/">BACK TO HOME</a>
     <a class="pro-btn" href="/pro/logout">LOGOUT</a>
     <a class="pro-btn blue" href="/pro/add">ADD VIDEO</a>
 </div>
+
+<div class="header-gap"></div>
+<style>
+    .fixed {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        background-color: #000;
+
+        img{
+            padding: 12px;
+        }
+    }
+
+    .header-gap {
+        height: 10rem;
+    }
+</style>
 
 <div class="videos pro">
     {% if videos %} {% for video in videos %}

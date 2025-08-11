@@ -17,6 +17,7 @@ def create_app(app):
     app.config ["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.init_app(app)
     migrate(app, db)
+    
     return app
 
 def create_tables():

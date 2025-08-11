@@ -1,11 +1,69 @@
 {% extends 'base.html' %}
 
+<style>
+.chat-messages {
+    margin-top: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #f9f9f9;
+}
 
+.chat-header {
+    background: #333;
+    color: white;
+    padding: 10px;
+    border-radius: 8px 8px 0 0;
+    text-align: center;
+}
+
+.chat-header h4 {
+    margin: 0;
+    font-size: 14px;
+}
+
+.messages-container {
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.message {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.message.info {
+    border-left: 4px solid #2196F3;
+}
+
+.message.success {
+    border-left: 4px solid #4CAF50;
+}
+
+.message.warning {
+    border-left: 4px solid #FF9800;
+}
+
+.message.error {
+    border-left: 4px solid #F44336;
+}
+
+.message-time {
+    color: #666;
+    font-size: 10px;
+    margin-top: 4px;
+}
+</style>
 
 {% block content %}
 
 <div class="pro-form">
-<form class="pro" action="" method="post" enctype="multipart/form-data">
+<form class="pro" action="" method="post" enctype="multipart/form-data" id="uploadForm">
 
     <div class="flex gap-4">
         <label class="custom-checkbox-pro">
@@ -16,24 +74,34 @@
     </div>
     <div class="flex-cl gap-4">
         <div class="flex">
-            <input type="text" name="description" placeholder="description">
-        </div>
-    </div>
-    <div class="flex-cl gap-4">
-        <div class="flex">
             <input type="text" name="url" placeholder="URL" required>
         </div>
         <p>url example: parimatch-epic-battle</p>
     </div>
 
-    <label for="preview">Preview</label>
-    <input type="file" name="preview" id="preview">
-    <label for="background">Background</label>
-    <input type="file" name="background" id="background">
-    <label for="highlight">Highlight</label>
-    <input type="file" name="highlight" id="highlight">
-    <label for="video">Video</label>
-    <input type="file" name="video" id="video" required>
+    <div class="file-upload-section">
+        <div class="file-upload-item">
+            <label for="preview">Preview</label>
+            <div class="file-input-wrapper">
+                <input type="file" name="preview" id="preview" accept="image/*" class="file-input">
+                <div class="file-input-label">
+                    <span class="file-text">SELECT IMAGE</span>
+                </div>
+            </div>
+            <div class="file-preview" id="preview-preview"></div>
+        </div>
+
+        <div class="file-upload-item">
+            <label for="video">Video <span class="required">*</span></label>
+            <div class="file-input-wrapper">
+                <input type="file" name="video" id="video" accept="video/*" required class="file-input">
+                <div class="file-input-label">
+                    <span class="file-text">SELECT VIDEO</span>
+                </div>
+            </div>
+            <div class="file-preview" id="video-preview"></div>
+        </div>
+    </div>
 
     <div class="divider"></div>
 
@@ -58,14 +126,63 @@
         </div>
     </div>
     <button type="button" id="add-credit">ADD ROLE</button>
+    
+    <div class="upload-progress" id="uploadProgress" style="display: none;">
+        <div class="progress-header">
+            <h3>LOADING FILES</h3>
+            <span class="progress-percentage" id="progressPercentage">0%</span>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-status" id="progressStatus">PREPARING FILES</div>
+        
+        <div class="chat-messages" id="chatMessages">
+            <div class="chat-header">
+                <h4>SERVER MESSAGES</h4>
+            </div>
+            <div class="divider"></div>
+            <div class="messages-container" id="messagesContainer"></div>
+        </div>
+    </div>
 
-    <input type="submit" value="SUBMIT">
+    <button type="submit" value="SUBMIT" id="submitBtn">SUBMIT</button>
 </form>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
 $(function() {
+    $('.file-input-wrapper').each(function() {
+        const wrapper = $(this);
+        const input = wrapper.find('.file-input');
+        const label = wrapper.find('.file-input-label');
+        
+        wrapper.on('dragover', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            wrapper.addClass('drag-over');
+        });
+        
+        wrapper.on('dragleave', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            wrapper.removeClass('drag-over');
+        });
+        
+        wrapper.on('drop', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            wrapper.removeClass('drag-over');
+            
+            const files = e.originalEvent.dataTransfer.files;
+            if (files.length > 0) {
+                input[0].files = files;
+                input.trigger('change');
+            }
+        });
+    });
+
     $('#add-credit').on('click', function() {
         const creditHTML = `
             <div class="credit-entry flex">
@@ -84,8 +201,227 @@ $(function() {
     $('#credits-list').on('click', '.remove-credit', function() {
         $(this).closest('.credit-entry').remove();
     });
+
+    $('.file-input').on('change', function() {
+        const file = this.files[0];
+        const previewId = this.id + '-preview';
+        const preview = $('#' + previewId);
+        const inputWrapper = $(this).closest('.file-input-wrapper');
+        
+        if (file) {
+            const validationResult = validateFile(file, this.id);
+            if (!validationResult.valid) {
+                alert(validationResult.message);
+                this.value = '';
+                preview.empty();
+                const label = $(this).siblings('.file-input-label').find('.file-text');
+                label.text('SELECT IMAGE');
+                inputWrapper.removeClass('valid-file invalid-file');
+                return;
+            }
+            
+            const label = $(this).siblings('.file-input-label').find('.file-text');
+            label.text(file.name);
+            
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.html(`
+                        <div class="file-preview-content">
+                            <img src="${e.target.result}" alt="Preview" class="preview-image">
+                            <div class="file-info">
+                                <span class="file-name">${file.name}</span>
+                                <span class="file-size">${formatFileSize(file.size)}</span>
+                            </div>
+                        </div>
+                    `);
+                };
+                reader.readAsDataURL(file);
+            } else if (file.type.startsWith('video/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.html(`
+                        <div class="file-preview-content">
+                            <video src="${e.target.result}" controls class="preview-video"></video>
+                            <div class="file-info">
+                                <span class="file-name">${file.name}</span>
+                                <span class="file-size">${formatFileSize(file.size)}</span>
+                            </div>
+                        </div>
+                    `);
+                };
+                reader.readAsDataURL(file);
+            }
+            
+            inputWrapper.removeClass('invalid-file').addClass('valid-file');
+        } else {
+            preview.empty();
+            const label = $(this).siblings('.file-input-label').find('.file-text');
+            label.text('SELECT IMAGE');
+            inputWrapper.removeClass('valid-file invalid-file');
+        }
+    });
+
+    function validateFile(file, inputId) {
+        const maxSize = {
+            'preview': 10 * 1024 * 1024,
+            'video': 500 * 1024 * 1024
+        };
+        
+        const allowedTypes = {
+            'preview': ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+            'video': ['video/mp4', 'video/avi', 'video/mov', 'video/wmv', 'video/flv']
+        };
+        
+        if (file.size > maxSize[inputId]) {
+            return {
+                valid: false,
+                message: `FILE TOO BIG. MAX SIZE: ${formatFileSize(maxSize[inputId])}`
+            };
+        }
+        
+        if (!allowedTypes[inputId].includes(file.type)) {
+            return {
+                valid: false,
+                message: `UNSUPPORTED FILE TYPE. ALLOWED: ${allowedTypes[inputId].join(', ')}`
+            };
+        }
+        
+        return { valid: true };
+    }
+
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    function addMessage(message, type = 'info') {
+        const messagesContainer = $('#messagesContainer');
+        const time = new Date().toLocaleTimeString();
+        
+        const messageHTML = `
+            <div class="message ${type}">
+                <div class="message-text">${message}</div>
+                <div class="message-time">${time}</div>
+            </div>
+        `;
+        
+        messagesContainer.append(messageHTML);
+        messagesContainer.scrollTop(messagesContainer[0].scrollHeight);
+    }
+    
+    function updateButton(text, disabled = false) {
+        const submitBtn = $('#submitBtn');
+        submitBtn.prop('disabled', disabled).text(text);
+    }
+    
+    function checkFileStatus(url) {
+        $.ajax({
+            url: `/pro/status/${url}`,
+            method: 'GET',
+            success: function(response) {
+                if (response.video_exists) {
+                    addMessage(`VIDEO READY: ${response.video_size_mb} MB`, 'success');
+                    updateButton(`VIDEO READY: ${response.video_size_mb} MB`, true);
+                } else {
+                    addMessage('WAITING FOR VIDEO...', 'warning');
+                    updateButton('WAITING FOR VIDEO...', true);
+                }
+                
+                if (response.in_database) {
+                    addMessage('VIDEO SAVED TO DATABASE!', 'success');
+                    updateButton('COMPLETED!', true);
+                    
+                    setTimeout(() => {
+                        window.location.href = '/pro';
+                    }, 2000);
+                } else {
+                    addMessage('WAITING FOR DATABASE SAVE...', 'info');
+                    updateButton('SAVING TO DATABASE...', true);
+                    
+                    setTimeout(() => checkFileStatus(url), 2000);
+                }
+            },
+            error: function(xhr) {
+                addMessage('STATUS CHECK ERROR: ' + xhr.statusText, 'error');
+                updateButton('STATUS CHECK ERROR', false);
+            }
+        });
+    }
+    
+    $('#uploadForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const submitBtn = $('#submitBtn');
+        const progressSection = $('#uploadProgress');
+        
+        progressSection.show();
+        submitBtn.prop('disabled', true).text('LOADING...');
+        
+        $('#messagesContainer').empty();
+        addMessage('STARTING UPLOAD...', 'info');
+        
+        const xhr = new XMLHttpRequest();
+        
+        xhr.upload.addEventListener('progress', function(e) {
+            if (e.lengthComputable) {
+                const percentComplete = (e.loaded / e.total) * 100;
+                $('#progressFill').css('width', percentComplete + '%');
+                $('#progressPercentage').text(Math.round(percentComplete) + '%');
+                
+                if (percentComplete < 100) {
+                    $('#progressStatus').text('LOADING FILES...');
+                    updateButton(`UPLOADING: ${Math.round(percentComplete)}%`, true);
+                } else {
+                    $('#progressStatus').text('PROCESSING VIDEO (FFMPEG)...');
+                    updateButton('PROCESSING VIDEO...', true);
+                }
+            }
+        });
+        
+        xhr.addEventListener('load', function() {
+            if (xhr.status === 200) {
+                $('#progressStatus').text('LOADING COMPLETED');
+                $('#progressFill').css('width', '100%');
+                $('#progressPercentage').text('100%');
+                addMessage('FILES UPLOADED, STARTING PROCESSING...', 'success');
+                
+                try {
+                    const response = JSON.parse(xhr.responseText);
+                    if (response.url) {
+                        addMessage('STARTING STATUS CHECK...', 'info');
+                        updateButton('CHECKING STATUS...', true);
+                        
+                        setTimeout(() => checkFileStatus(response.url), 1000);
+                    } else {
+                        addMessage('ERROR: URL NOT RECEIVED', 'error');
+                        updateButton('ERROR - TRY AGAIN', false);
+                    }
+                } catch (e) {
+                    addMessage('ERROR: SERVER RESPONSE PARSING', 'error');
+                    updateButton('ERROR - TRY AGAIN', false);
+                }
+            } else {
+                $('#progressStatus').text('ERROR: ' + xhr.statusText);
+                addMessage('UPLOAD ERROR: ' + xhr.statusText, 'error');
+                updateButton('ERROR - TRY AGAIN', false);
+            }
+        });
+        
+        xhr.addEventListener('error', function() {
+            $('#progressStatus').text('NETWORK ERROR');
+            addMessage('NETWORK ERROR', 'error');
+            updateButton('NETWORK ERROR', false);
+        });
+        
+        xhr.open('POST', '/pro/add');
+        xhr.send(formData);
+    });
 });
 </script>
-
 
 {% endblock content %}

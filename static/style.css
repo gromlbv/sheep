@@ -212,7 +212,7 @@ form.pro {
     font-size: 18px;
   }
 
-  input[type='submit'] {
+  input[type='submit'], #submitBtn {
     color: black !important;
     background-color: #00C0F3;
     font-size: 21px;
@@ -536,4 +536,151 @@ header{
       gap: 24px;
     }
   }
+}
+
+/* Простые стили для загрузки файлов в стиле .pro */
+.file-upload-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.file-upload-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.file-upload-item label {
+  font-size: 18px;
+  color: #303741;
+}
+
+.file-input-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.file-input {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.file-input-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 2px solid #303741;
+  background-color: transparent;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.file-input-label:hover {
+  opacity: 0.8;
+}
+
+.file-icon {
+  font-size: 20px;
+}
+
+.file-text {
+  color: #303741;
+}
+
+.file-preview {
+  margin-top: 6px;
+  min-height: 20px;
+}
+
+.file-preview-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  border: 2px solid #303741;
+  background-color: transparent;
+}
+
+.preview-image {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+}
+
+.preview-video {
+  width: 120px;
+  height: 60px;
+  object-fit: cover;
+}
+
+.file-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.file-name {
+  font-size: 16px;
+  color: #303741;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-size {
+  font-size: 14px;
+  color: #303741;
+}
+
+/* Прогресс загрузки */
+.upload-progress {
+  border: 2px solid #303741;
+  background-color: transparent;
+  padding: 12px;
+  margin: 12px 0;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.progress-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #303741;
+}
+
+.progress-percentage {
+  font-size: 18px;
+  color: #00C0F3;
+  font-weight: bold;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: #303741;
+  margin-bottom: 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #00C0F3;
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+.progress-status {
+  font-size: 16px;
+  color: #303741;
+  text-align: center;
 }
