@@ -176,7 +176,7 @@ button{
 
     top: 0;
     width: 12vw;
-    height: 100vh;
+    height: calc(100vh - 96px);;
     padding: 48px 64px;
 
     .info{
@@ -261,6 +261,8 @@ header {
     background-color: black;
 
     user-select: none;
+
+    transition: opacity 0.5s ease, filter 0.5s ease;
 
     a {
         display: flex;
@@ -458,4 +460,13 @@ video {
             padding-right: 100px !important;
         }
     }
+}
+
+
+.blur-out{
+    filter: blur(0);
+}
+.blur-out.blurred{
+    filter: blur(10px) !important;
+    opacity: 0 !important;
 }

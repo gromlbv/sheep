@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
 </head>
 <body>
-    <header>
+    <header class="blur-out">
         <a href="/" class="active cursor-hover">HOME</a>
         <a href="/about" class="cursor-hover">ABOUT</a>
         <a href="/contact" class="cursor-hover">CONTACT</a>
@@ -22,11 +22,11 @@
             <span>|</span>
         </div>
         <button id="volume" class="cursor-hover">
-            <img src="/static/icons/volume-off.svg" alt="VOLUME">
+            <img src="/static/icons/volume-off.svg" draggable="false" alt="VOLUME">
         </button>
     </header>
 
-    <div class="custom-cursor"></div>
+    <div class="custom-cursor blur-out"></div>
     <div class="custom-cursor-helper hidden"></div>
 
     <div class="content home active">
@@ -41,33 +41,33 @@
             </div>
             <div id="play" class="extend left cursor-hover" role="button" aria-label="Play video">
                 <div class="info">
-                    <img src="static/icons/play.svg">
+                    <img src="static/icons/play.svg" draggable="false">
                     PLAY
                 </div>
             </div>
 
             <div id="to-all-videos" class="extend right hidden cursor-hover" role="button" aria-label="View all videos">
                 <div class="info">
-                    <img src="static/icons/arrow-right.svg">
+                    <img src="static/icons/arrow-right.svg" draggable="false">
                     ALL VIDEOS
                 </div>
             </div>
             <div id="back" class="extend right hidden cursor-hover" role="button" aria-label="Go back">
                 <div class="info">
-                    <img src="static/icons/arrow-right.svg">
+                    <img src="static/icons/arrow-right.svg" draggable="false">
                     BACK
                 </div>
             </div>
             <div id="info" class="extend left hidden cursor-hover" role="button" aria-label="Show video info">
                 <div class="info">
-                    <img src="static/icons/info.svg">
+                    <img src="static/icons/info.svg" draggable="false">
                     INFO
                 </div>
             </div>
 
             <div id="hide-info" class="extend fill invisible hidden cursor-hover">
                 <div class="info">
-                    <img src="static/icons/play.svg">
+                    <img src="static/icons/play.svg" draggable="false">
                     Hide info
                 </div>
             </div>
@@ -130,7 +130,7 @@
     let videoCacheSize = 0;
     let isMuted = true;
     let isPlaying = false;
-    let state = 'all-videos';
+    let state = 'landing-active';
 
     const MAX_CACHE_SIZE = 5000 * 1024 * 1024;
 
@@ -140,9 +140,13 @@
         });
     }
 
+    function getRandomPadding(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min + 'px';
+    }
+
     function createRandomPadding() {
         $('.video').each(function() {
-            const randomPadding = Math.floor(Math.random() * 201) + 100 + 'px';
+            const randomPadding = getRandomPadding(100, 300);
             $(this).find('span:not(.num)').css('padding-right', randomPadding);
         });
     }
@@ -158,23 +162,53 @@
             const cachedVideo = videoCache[url];
             cachedVideo.muted = isMuted;
             cachedVideo.volume = isMuted ? 0 : 0.5;
+            
+            if (cachedVideo.readyState < 3) {
+                return cachedVideo;
+            }
+            
+            cachedVideo.currentTime = 0;
             return cachedVideo;
         }
+
         const video = document.createElement('video');
+        
         video.src = 'static/videos/' + url + '.mp4';
-        video.autoplay = true;
-        video.muted = true; // временный фикс
+        video.muted = true;
         video.setAttribute('playsinline', true);
-        video.preload = 'auto';
+        video.setAttribute('preload', 'metadata');
+        
         video.style.width = '100%';
         video.style.height = '100%';
         video.style.objectFit = 'cover';
+        
         const approxSize = 50 * 1024 * 1024;
         videoCache[url] = video;
         videoOrder.push(url);
         videoCacheSize += approxSize;
         
+        cleanupVideoCache();
+        
+        video.addEventListener('error', (e) => {
+            console.error('Ошибка загрузки видео:', url, e);
+            delete videoCache[url];
+            const index = videoOrder.indexOf(url);
+            if (index > -1) {
+                videoOrder.splice(index, 1);
+                videoCacheSize -= approxSize;
+            }
+        });
+        
         return video;
+    }
+
+    function preloadVideos() {
+        $('.video.view').each(function() {
+            const url = $(this).data('url');
+            if (url && !videoCache[url]) {
+                createOrGetVideo(url);
+            }
+        });
     }
 
     function cleanupVideoCache() {
@@ -191,18 +225,36 @@
 
     function stopAllVideos() {
         Object.values(videoCache).forEach(video => {
-            video.pause();
-            video.currentTime = 0;
+            if (video && !video.paused) {
+                video.pause();
+                video.currentTime = 0;
+            }
         });
+        
         const mainVideo = document.getElementById('main-video');
-        if (mainVideo) {
+        if (mainVideo && !mainVideo.paused) {
             mainVideo.pause();
             mainVideo.currentTime = 0;
         }
+        
+        isPlaying = false;
     }
 
     setVideoIndices();
     createRandomPadding();
+    preloadVideos();
+
+    $(window).on('resize', function() {
+        if (videoCacheSize > MAX_CACHE_SIZE / 2) {
+            cleanupVideoCache();
+        }
+    });
+
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            stopAllVideos();
+        }
+    });
 </script>
 
 <script>
@@ -224,7 +276,7 @@
             const $thirdClear = $videoInfo.find('.video.clear').eq(2);
             
             creditsArray.forEach((credit, index) => {
-                const randomPadding = Math.floor(Math.random() * 51) + 30 + 'px';
+                const randomPadding = getRandomPadding(30, 80);
                 const $newVideo = $(`
                     <div class="video">
                         <span class="num">${credit.role}:</span>
@@ -243,44 +295,58 @@
         const creditsSimple = $element.data('credits-simple');
         const mainVideo = document.getElementById('main-video');
         
-        if (!$activeVideo || $activeVideo.data('url') !== url) {
-            if ($activeVideo) {
-                $activeVideo.removeClass('active');
+        if ($activeVideo && $activeVideo.data('url') === url) {
+            return;
+        }
+        
+        if ($activeVideo) {
+            $activeVideo.removeClass('active');
+        }
+        
+        $element.addClass('active');
+        $activeVideo = $element;
+        
+        if (credits) {
+            $('.video-text').html(formatMultilineText(credits));
+        }
+        updateVideoInfo(creditsSimple);
+        
+        if ($element.hasClass('view')) {
+            if (mainVideo.src && mainVideo.src.includes(url)) {
+                return;
             }
-            $element.addClass('active');
-            $activeVideo = $element;
-            if ($element.hasClass('view')) {
-                if (mainVideo.src && mainVideo.src.includes(url)) {
-                    if (credits) {
-                        $('.video-text').html(formatMultilineText(credits));
-                        $('.video-text').html(formatMultilineText(credits));
-                    }
-                    updateVideoInfo(creditsSimple);
-                    return;
-                }
-                isPlaying = true;
-                stopAllVideos();
+            
+            stopAllVideos();
+            
+            isPlaying = true;
+            
+            $(mainVideo).addClass('hidden');
+            
+            const video = createOrGetVideo(url);
+            
+            setTimeout(() => {
+                if (!isPlaying) return;
+                
+                mainVideo.src = video.src;
+                mainVideo.muted = isMuted;
+                mainVideo.volume = isMuted ? 0 : 0.5;
                 mainVideo.currentTime = 0;
-                $(mainVideo).addClass('hidden');
-                setTimeout(() => {
-                    if (!isPlaying) return;
-                    const video = createOrGetVideo(url);
-                    mainVideo.src = video.src;
-                    mainVideo.muted = isMuted;
-                    mainVideo.volume = isMuted ? 0 : 0.5;
-                    mainVideo.currentTime = 0;
-                    $(mainVideo).removeClass('hidden');
+                
+                $(mainVideo).removeClass('hidden');
+                
+                if (isPlaying && mainVideo.src === video.src) {
                     mainVideo.play().then(() => {
                         isPlaying = false;
                     }).catch(e => {
+                        if (e.name !== 'AbortError') {
+                            console.error('Ошибка воспроизведения:', e);
+                        }
                         isPlaying = false;
                     });
-                }, 200);
-                if (credits) {
-                    $('.video-text').html(formatMultilineText(credits));
+                } else {
+                    isPlaying = false;
                 }
-                updateVideoInfo(creditsSimple);
-            }
+            }, 150);
         }
     }
 
@@ -302,8 +368,8 @@
             video.muted = isMuted;
             video.volume = isMuted ? 0 : 0.5;
         }
-        const iconOff = '<img src="static/icons/volume-off.svg" alt="VOLUME OFF">';
-        const iconOn = '<img src="static/icons/volume-on.svg" alt="VOLUME ON">';
+        const iconOff = '<img src="static/icons/volume-off.svg" draggable="false" alt="VOLUME OFF">';
+        const iconOn = '<img src="static/icons/volume-on.svg" draggable="false" alt="VOLUME ON">';
         $(this).html(isMuted ? iconOff : iconOn);
     });
 </script>
@@ -322,6 +388,9 @@
 
     function animateRow($container, direction = 'in') {
         const $elems = $container.find('.video, .clear');
+        
+        if ($elems.length === 0) return;
+        
         const order = getRandomizedOrder($elems.length);
         
         const totalDuration = 2000;
@@ -366,10 +435,12 @@
 
         $elems.each(function(i) {
             setTimeout(() => {
-                $(this).css({
-                    transform: transformValue,
-                    opacity: opacityValue
-                });
+                if ($(this).length > 0) {
+                    $(this).css({
+                        transform: transformValue,
+                        opacity: opacityValue
+                    });
+                }
             }, order[i] * delayBetweenElements);
         });
     }
@@ -378,22 +449,59 @@
 </script>
 
 <script>
+    let distractionTimeout = null;
+    let isDistractionHidden = false;
+
+    function startDistractionHideTimer() {
+        clearTimeout(distractionTimeout);
+        showDistractions();
+        distractionTimeout = setTimeout(() => {
+            hideDistractions();
+        }, 3000);
+    }
+
+    function hideDistractions() {
+        if (!isDistractionHidden) {
+            $('.blur-out').addClass('blurred');
+            isDistractionHidden = true;
+        }
+    }
+
+    function showDistractions() {
+        if (isDistractionHidden) {
+            $('.blur-out').removeClass('blurred');
+            isDistractionHidden = false;
+        }
+    }
+
+    ['mousemove', 'mousedown', 'keydown', 'touchstart'].forEach(event => {
+        document.addEventListener(event, () => {
+            if (state === 'landing-active' || state === 'view-video') {
+                startDistractionHideTimer();
+            } else {
+                showDistractions();
+                clearTimeout(distractionTimeout);
+            }
+        });
+    });
+
+
     function setState(newState) {
         state = newState;
 
-        all_videos = $('.all-videos');
-        video_info = $('.video-info');
+        const all_videos = $('.all-videos');
+        const video_info = $('.video-info');
+
+        const extend = $('.extend');
+        const to_all_videos = $('#to-all-videos');
+        const play = $('#play');
+        const back = $('#back');
+        const info = $('#info');
+        const video_text = $('.video-text');
+        const hide_info = $('#hide-info');
 
         all_videos.removeClass('active');
         video_info.removeClass('active');
-
-        extend = $('.extend');
-        to_all_videos = $('#to-all-videos');
-        play = $('#play');
-        back = $('#back');
-        info = $('#info');
-        video_text = $('.video-text');
-        hide_info = $('#hide-info');
 
         video_text.addClass('hidden');
         extend.addClass('hidden');
@@ -401,6 +509,8 @@
         switch (state) {
             case 'landing-active':
                 to_all_videos.removeClass('hidden');
+
+                startDistractionHideTimer()
 
                 animateRow(all_videos, 'outRight');
                 handleVideoHover($('.video.view').first());
@@ -420,7 +530,8 @@
             case 'view-video':
                 back.removeClass('hidden');
                 info.removeClass('hidden');
-                video_text.removeClass('hidden');
+
+                startDistractionHideTimer()
 
                 animateRow(all_videos, 'outRight');
                 animateRow(video_info, 'outLeft');

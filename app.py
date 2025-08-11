@@ -71,9 +71,9 @@ def video_add_post():
         is_featured = request.form.get('is_featured') == 'on'
 
         if not url:
-            return jsonify({"error": "URL обязателен"}), 400
+            return jsonify({"error": "URL REQUIRED"}), 400
         if not title:
-            return jsonify({"error": "Заголовок обязателен"}), 400
+            return jsonify({"error": "TITLE REQUIRED"}), 400
         if not description:
             description = ''
         if not is_featured:
@@ -83,11 +83,11 @@ def video_add_post():
         video_file = request.files.get('video')
 
         if not video_file:
-            return jsonify({"error": "Видео файл обязателен"}), 400
+            return jsonify({"error": "VIDEO FILE REQUIRED"}), 400
 
         results = files.upload(url, preview, video_file)
         if not results:
-            return jsonify({"error": "Ошибка при загрузке файлов"}), 400
+            return jsonify({"error": "ERROR UPLOADING FILES"}), 400
         
         if 'error' in results:
             return jsonify({"error": results['error']}), 400
@@ -110,7 +110,7 @@ def video_add_post():
         
         return jsonify({
             "success": True,
-            "message": "VIDEO SUCCESSFULLY ADDED",
+            "message": "VIDEO ADDED SUCCESSFULLY",
             "url": url
         }), 200
     except Exception as e:
