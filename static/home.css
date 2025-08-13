@@ -464,6 +464,10 @@ video {
     }
 }
 
+.video-ended{
+    display: none !important;
+}
+
 
 .blur-out{
     filter: blur(0);
