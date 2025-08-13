@@ -98,6 +98,14 @@
             <div class="video clear"><span></span></div>
         </div>
 
+        <div class="video-row video-ended">
+            <div class="video cursor-hover">
+                <a href="/contact">Enjoyed the video?       Let's get in touch!</a>
+            </div>
+            <div class="video cursor-hover" id="watch-again"><span>Watch again</span></div>
+            <div class="video cursor-hover" id="view-credits"><span>View credits</span></div>
+        </div>
+
     <div class="content contact">
         <div class="image">
             <img class="video-img" src="static/images/showreel.png">
@@ -146,12 +154,10 @@
 
     function createRandomPadding() {
         $('.video').each(function() {
-            const randomPadding = getRandomPadding(100, 300);
+            const randomPadding = getRandomPadding(30, 80);
             $(this).find('span:not(.num)').css('padding-right', randomPadding);
         });
     }
-
-
 
     function formatMultilineText(text) {
         return String(text).replace(/\\n/g, '<br>');
@@ -315,33 +321,39 @@
             if (mainVideo.src && mainVideo.src.includes(url)) {
                 return;
             }
-            
             stopAllVideos();
-            
+
             isPlaying = true;
-            
+
             $(mainVideo).addClass('hidden');
-            
+
             const video = createOrGetVideo(url);
-            
+
             setTimeout(() => {
                 if (!isPlaying) return;
-                
-                mainVideo.src = video.src;
+
+                if (mainVideo.src !== video.src) {
+                    mainVideo.src = video.src;
+                }
                 mainVideo.muted = isMuted;
                 mainVideo.volume = isMuted ? 0 : 0.5;
                 mainVideo.currentTime = 0;
-                
+
                 $(mainVideo).removeClass('hidden');
-                
-                if (isPlaying && mainVideo.src === video.src) {
-                    mainVideo.play().then(() => {
+
+                const playPromise = mainVideo.play();
+                if (playPromise && typeof playPromise.then === 'function') {
+                    playPromise.then(() => {
                         isPlaying = false;
                     }).catch(e => {
                         if (e.name !== 'AbortError') {
                             console.error('Ошибка воспроизведения:', e);
                         }
-                        isPlaying = false;
+                        mainVideo.muted = true;
+                        mainVideo.volume = 0;
+                        mainVideo.play().finally(() => {
+                            isPlaying = false;
+                        });
                     });
                 } else {
                     isPlaying = false;
@@ -358,6 +370,40 @@
 
     bindHoverHandlers();
     handleVideoHover($('.video:not(.clear)').first());
+
+    function handleVideoEnded() {
+        if (state === 'view-video' || state === 'all-videos') {
+            const $videoEnded = $('.video-ended');
+            $videoEnded.addClass('active');
+            
+            const $elems = $videoEnded.find('.video');
+            $elems.css({
+                transform: 'translateX(0)',
+                opacity: 1
+            });
+            
+            setTimeout(() => {
+                animateRow($videoEnded, 'outLeft');
+            }, 100);
+        }
+    }
+
+    const mainVideo = document.getElementById('main-video');
+    if (mainVideo) {
+        mainVideo.addEventListener('ended', handleVideoEnded);
+    }
+    $('#watch-again').on('click', function() {
+        $('.video-ended').removeClass('active');
+        if (mainVideo) {
+            mainVideo.currentTime = 0;
+            mainVideo.play();
+        }
+    });
+
+    $('#view-credits').on('click', function() {
+        $('.video-ended').removeClass('active');
+        setState('view-info');
+    });
 </script>
 
 <script>
@@ -491,6 +537,7 @@
 
         const all_videos = $('.all-videos');
         const video_info = $('.video-info');
+        const video_ended = $('.video-ended');
 
         const extend = $('.extend');
         const to_all_videos = $('#to-all-videos');
@@ -499,9 +546,10 @@
         const info = $('#info');
         const video_text = $('.video-text');
         const hide_info = $('#hide-info');
-
+        
         all_videos.removeClass('active');
         video_info.removeClass('active');
+        video_ended.removeClass('active');
 
         video_text.addClass('hidden');
         extend.addClass('hidden');
@@ -513,6 +561,7 @@
                 startDistractionHideTimer()
 
                 animateRow(all_videos, 'outRight');
+                animateRow(video_ended, 'outLeft');
                 handleVideoHover($('.video.view').first());
 
                 break;

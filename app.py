@@ -1,11 +1,11 @@
 from flask import Flask
-from flask import render_template, session, request, flash, redirect, jsonify, url_for, send_from_directory
+from flask import render_template, session, request, flash, redirect, jsonify, url_for
 import os
 
 import mydb as db
 from models import create_app, create_tables
 from models import db as database
-from mysecurity import verify, decode, post_login, is_loggined
+from mysecurity import post_login, is_loggined
 import files as files 
 
 from tools import *
