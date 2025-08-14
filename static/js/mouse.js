@@ -183,6 +183,17 @@ $(document).ready(function () {
         cursor.css('opacity', '0');
         isSticked = false;
         stickedElement = null;
+        
+        cursor.removeClass('morphing').css({
+            width: '20px',
+            height: '20px',
+            borderRadius: '0',
+            background: 'rgba(255, 255, 255, 0.8)',
+            transform: 'translate(-50%, -50%)',
+            clipPath: 'none'
+        });
+        
+        helperCursor.addClass('hidden');
     });
 
     $(document).mouseenter(function () {
