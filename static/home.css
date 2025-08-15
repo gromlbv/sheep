@@ -18,9 +18,9 @@ body{
     position: absolute;
     width: 20px;
     height: 20px;
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(255, 255, 255, 1);
     pointer-events: none;
-    z-index: 30;
+    z-index: 400;
     transition: all 0.2s cubic-bezier(0.075, 0.82, 0.165, 1);
     mix-blend-mode: difference;
     transform: translate(-50%, -50%);
@@ -475,4 +475,54 @@ video {
 .blur-out.blurred{
     filter: blur(10px) !important;
     opacity: 0 !important;
+}
+
+/* Loading Screen Styles */
+.loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 200;
+    display: flex;
+    flex-wrap: wrap;
+    overflow: hidden;
+}
+
+.loading.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s 0.2s ease;
+}
+
+#logo{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40vw;
+    height: 40vh;
+    z-index: 201;
+}
+#logo.page-loaded{
+    right: 48px;
+    top: 48px;
+    height: 56px;
+    width: 130px;
+    left: initial;
+    transform: translate(0, 0);
+    transition: all 1.2s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+.pixel {
+    width: calc(100vw / 15);
+    height: calc(100vh / 15);
+    background-color: black;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+    flex-shrink: 0;
+}
+
+.pixel.fade-out {
+    opacity: 0;
 }

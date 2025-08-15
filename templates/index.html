@@ -14,6 +14,26 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
 </head>
 <body>
+    <img src="static/images/logos/header.svg" alt="Logo" id="logo">
+
+    <div class="loading">
+        <div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div>
+        <div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div>
+        <div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div>
+        <div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div>
+        <div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div>
+        <div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div>
+        <div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div>
+        <div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div>
+        <div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div>
+        <div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div>
+        <div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div>
+        <div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div>
+        <div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div>
+        <div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div>
+        <div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div>
+        <div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div><div class="pixel"></div>
+    </div>
     <header class="blur-out">
         <a href="/" class="active cursor-hover">HOME</a>
         <a href="/about" class="cursor-hover">ABOUT</a>
@@ -490,133 +510,10 @@
             }, order[i] * delayBetweenElements);
         });
     }
-
-
 </script>
 
-<script>
-    let distractionTimeout = null;
-    let isDistractionHidden = false;
-
-    function startDistractionHideTimer() {
-        clearTimeout(distractionTimeout);
-        showDistractions();
-        distractionTimeout = setTimeout(() => {
-            hideDistractions();
-        }, 3000);
-    }
-
-    function hideDistractions() {
-        if (!isDistractionHidden) {
-            $('.blur-out').addClass('blurred');
-            isDistractionHidden = true;
-        }
-    }
-
-    function showDistractions() {
-        if (isDistractionHidden) {
-            $('.blur-out').removeClass('blurred');
-            isDistractionHidden = false;
-        }
-    }
-
-    ['mousemove', 'mousedown', 'keydown', 'touchstart'].forEach(event => {
-        document.addEventListener(event, () => {
-            if (state === 'landing-active' || state === 'view-video') {
-                startDistractionHideTimer();
-            } else {
-                showDistractions();
-                clearTimeout(distractionTimeout);
-            }
-        });
-    });
-
-
-    function setState(newState) {
-        state = newState;
-
-        const all_videos = $('.all-videos');
-        const video_info = $('.video-info');
-        const video_ended = $('.video-ended');
-
-        const extend = $('.extend');
-        const to_all_videos = $('#to-all-videos');
-        const play = $('#play');
-        const back = $('#back');
-        const info = $('#info');
-        const video_text = $('.video-text');
-        const hide_info = $('#hide-info');
-        
-        all_videos.removeClass('active');
-        video_info.removeClass('active');
-        video_ended.removeClass('active');
-
-        video_text.addClass('hidden');
-        extend.addClass('hidden');
-        
-        switch (state) {
-            case 'landing-active':
-                to_all_videos.removeClass('hidden');
-
-                startDistractionHideTimer()
-
-                animateRow(all_videos, 'outRight');
-                animateRow(video_ended, 'outLeft');
-                handleVideoHover($('.video.view').first());
-
-                break;
-
-            case 'all-videos':
-                play.removeClass('hidden');
-                video_text.removeClass('hidden');
-                all_videos.addClass('active');
-
-                animateRow(all_videos, 'inRight');
-                animateRow(video_info, 'outLeft');
-
-                break;
-
-            case 'view-video':
-                back.removeClass('hidden');
-                info.removeClass('hidden');
-
-                startDistractionHideTimer()
-
-                animateRow(all_videos, 'outRight');
-                animateRow(video_info, 'outLeft');
-
-                break;
-
-            case 'view-info':
-                back.removeClass('hidden');
-                hide_info.removeClass('hidden');
-
-                video_info.addClass('active');
-                all_videos.removeClass('active');
-
-                animateRow(all_videos, 'outRight');  
-                animateRow(video_info, 'inLeft');
-                
-                break;
-
-            default:
-                break;
-        }
-    }
-
-    $('.video.view, #play, #hide-info').on('click', () =>
-    setState('view-video'));
-    
-    $('#back, #to-all-videos').on('click', () =>
-    setState('all-videos'));
-
-    $('#info').on('click', () =>
-    setState('view-info'));
-
-
-    setState('landing-active');
-</script>
-
+<script src="/static/js/loading.js"></script>
+<script src="/static/js/states.js"></script>
 <script src="/static/js/mouse.js"></script>
 
 </html></html>
