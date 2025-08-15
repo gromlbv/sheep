@@ -22,10 +22,8 @@ class LoadingScreen {
         const totalPixels = this.pixels.length;
         const duration = 1000;
         
-        // Создаем 3 случайные начальные точки
         const startPoints = this.getRandomStartPoints(3);
         
-        // Вычисляем расстояние от каждого пикселя до ближайшей начальной точки
         const pixelDistances = this.pixels.map((pixel, index) => {
             const pixelRect = pixel.getBoundingClientRect();
             const pixelCenter = {
@@ -33,7 +31,6 @@ class LoadingScreen {
                 y: pixelRect.top + pixelRect.height / 2
             };
             
-            // Находим минимальное расстояние до любой из начальных точек
             let minDistance = Infinity;
             startPoints.forEach(startPoint => {
                 const distance = Math.sqrt(
@@ -48,7 +45,6 @@ class LoadingScreen {
             return { pixel, distance: minDistance, index };
         });
         
-        // Сортируем пиксели по расстоянию (ближайшие к начальным точкам сначала)
         pixelDistances.sort((a, b) => a.distance - b.distance);
         
         const interval = duration / totalPixels;

@@ -1,5 +1,5 @@
 body{
-    width: 100vw;
+    width: 100%;
     margin: 0;
     padding: 0;
 
@@ -84,7 +84,6 @@ button{
 }
 
 .content{
-    transform: translateX(100vw);
     opacity: 0;
     pointer-events: none;
 }
