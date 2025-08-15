@@ -8,6 +8,7 @@ body{
     font-weight: 500;
 
     overflow-x: hidden;
+    overflow-y: scroll;
 }
 
 *{
@@ -22,7 +23,6 @@ body{
     pointer-events: none;
     z-index: 400;
     transition: all 0.2s cubic-bezier(0.075, 0.82, 0.165, 1);
-    mix-blend-mode: difference;
     transform: translate(-50%, -50%);
 }
 
@@ -48,7 +48,6 @@ body{
     pointer-events: none;
     height: 10px;
     background: rgba(255, 255, 255, 1);
-    mix-blend-mode: difference;
 
     transform: translate(-50%, -50%);
     opacity: 1;
@@ -161,7 +160,6 @@ button{
         transform: translateX(-100%);
         pointer-events: none;
     }
-    
 }
 
 
@@ -476,7 +474,7 @@ video {
     opacity: 0 !important;
 }
 
-/* Loading Screen Styles */
+
 .loading {
     position: fixed;
     top: 0;
@@ -493,6 +491,18 @@ video {
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.5s 0.2s ease;
+}
+.pixel {
+    width: calc(100vw / 15);
+    height: calc(100vh / 15);
+    background-color: black;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+    flex-shrink: 0;
+}
+
+.pixel.fade-out {
+    opacity: 0;
 }
 
 #logo{
@@ -512,16 +522,4 @@ video {
     left: initial;
     transform: translate(0, 0);
     transition: all 1.2s cubic-bezier(0.075, 0.82, 0.165, 1);
-}
-.pixel {
-    width: calc(100vw / 15);
-    height: calc(100vh / 15);
-    background-color: black;
-    opacity: 1;
-    transition: opacity 0.3s ease;
-    flex-shrink: 0;
-}
-
-.pixel.fade-out {
-    opacity: 0;
 }

@@ -11,6 +11,8 @@
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script type="module" src="https://lbvo.ru/utils/init.js" async defer></script>
 
+    <link rel="icon" type="image/png" href="static/images/logos/favicon.ico">
+
     <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
 </head>
 <body>
@@ -87,8 +89,13 @@
 
             <div id="hide-info" class="extend fill invisible hidden cursor-hover">
                 <div class="info">
-                    <img src="static/icons/play.svg" draggable="false">
                     Hide info
+                </div>
+            </div>
+
+            <div id="hide-videos" class="extend fill invisible hidden cursor-hover">
+                <div class="info">
+                    Hide videos
                 </div>
             </div>
         </div>

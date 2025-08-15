@@ -55,6 +55,7 @@ function setState(newState) {
     const all_videos = $('.all-videos');
     const video_info = $('.video-info');
     const video_ended = $('.video-ended');
+    const contacts_row = $('.contacts-row');
 
     const extend = $('.extend');
     const to_all_videos = $('#to-all-videos');
@@ -63,9 +64,11 @@ function setState(newState) {
     const info = $('#info');
     const video_text = $('.video-text');
     const hide_info = $('#hide-info');
+    const hide_videos = $('#hide-videos');
 
     const logo = $('#logo');
     
+    all_videos.removeClass('active');
     video_info.removeClass('active');
     video_ended.removeClass('active');
 
@@ -99,6 +102,7 @@ function setState(newState) {
         case 'all-videos':
             play.removeClass('hidden');
             video_text.removeClass('hidden');
+            hide_videos.removeClass('hidden');
             all_videos.addClass('active');
 
             animateRow(all_videos, 'inRight');
@@ -136,12 +140,18 @@ function setState(newState) {
             
             break;
 
+        case 'view-contacts':
+            contacts_row.addClass('active');
+            animateRow(contacts_row, 'inLeft');
+
+            break;
+            
         default:
             break;
     }
 }
 
-$('.video.view, #play, #hide-info').on('click', () =>
+$('.video.view, #play, #hide-info, #hide-videos').on('click', () =>
 setState('view-video'));
 
 $('#back, #to-all-videos').on('click', () =>
