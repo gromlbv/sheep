@@ -8,7 +8,7 @@ body{
     font-weight: 500;
 
     overflow-x: hidden;
-    overflow-y: scroll;
+    overflow-y: hidden;
 }
 
 *{
@@ -348,7 +348,7 @@ video {
 
 
 .video-row{
-    position: absolute;
+    position: fixed;
     right: 0;
     z-index: 5;
     
@@ -373,8 +373,6 @@ video {
 
         color: white;
         background-color: black;
-        /* cursor: pointer; */
-
 
         span{
             display: flex;
@@ -401,6 +399,8 @@ video {
         pointer-events: none;
     }
 }
+
+
 
 .video-row{
     pointer-events: none;
@@ -522,4 +522,20 @@ video {
     left: initial;
     transform: translate(0, 0);
     transition: all 1.2s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+
+
+
+.video.inactive {
+    opacity: 0.3 !important;
+    transform: translateX(10vw) !important;
+    pointer-events: none;
+}
+.video-info .video.inactive {
+    transform: translateX(-10vw) !important;
+}
+
+.video {
+    transition: opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }

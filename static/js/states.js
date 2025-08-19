@@ -50,6 +50,8 @@ function showDistractions() {
 });
 
 function setState(newState) {
+    if (newState == state) return;
+    
     state = newState;
 
     const all_videos = $('.all-videos');
