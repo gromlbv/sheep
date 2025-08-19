@@ -73,6 +73,11 @@ class FluidScroll {
         
         if (targetScrollY === this.currentScrollY) return;
         
+        if (this.lastScrollTime && Date.now() - this.lastScrollTime < 700) {
+            return;
+        }
+        this.lastScrollTime = Date.now();
+        
         this.animateToPosition(targetScrollY);
     }
 
