@@ -8,6 +8,22 @@ $(document).ready(function () {
     let mouseX = 0, mouseY = 0;
     let scrollX = 0, scrollY = 0;
     
+    function resetCursor() {
+        isSticked = false;
+        stickedElement = null;
+        
+        cursor.removeClass('morphing').css({
+            width: '20px',
+            height: '20px',
+            borderRadius: '0',
+            background: 'rgba(255, 255, 255, 0.8)',
+            transform: 'translate(-50%, -50%)',
+            clipPath: 'none'
+        });
+        
+        helperCursor.addClass('hidden');
+    }
+    
     $(window).scroll(function() {
         scrollX = window.pageXOffset || document.documentElement.scrollLeft;
         scrollY = window.pageYOffset || document.documentElement.scrollTop;
@@ -35,21 +51,11 @@ $(document).ready(function () {
             const pointerEvents = computedStyle.pointerEvents;
             
             if (opacity === 0 || pointerEvents === 'none' || !document.body.contains(stickedElement)) {
-                isSticked = false;
-                stickedElement = null;
-                
-                cursor.removeClass('morphing').css({
-                    width: '20px',
-                    height: '20px',
-                    borderRadius: '0',
-                    background: 'rgba(255, 255, 255, 0.8)',
-                    transform: 'translate(-50%, -50%)',
-                    clipPath: 'none',
+                resetCursor();
+                cursor.css({
                     left: mouseX,
                     top: mouseY
                 });
-                
-                helperCursor.addClass('hidden');
             } else {
                 const centerX = rect.left + rect.width / 2 + scrollX;
                 const centerY = rect.top + rect.height / 2 + scrollY;
@@ -72,21 +78,7 @@ $(document).ready(function () {
         });
         
         if (isSticked && stickedElement && !document.body.contains(stickedElement)) {
-            isSticked = false;
-            stickedElement = null;
-
-            cursor.removeClass('morphing').css({
-                width: '20px',
-                height: '20px',
-                borderRadius: '0',
-                background: 'rgba(255, 255, 255, 0.8)',
-                transform: 'translate(-50%, -50%)',
-                clipPath: 'none',
-                left: mouseX,
-                top: mouseY
-            });
-
-            helperCursor.addClass('hidden');
+            resetCursor();
         }
         requestAnimationFrame(animateCursor);
     }
@@ -135,16 +127,8 @@ $(document).ready(function () {
             mouseY > (rect.bottom + scrollY) + buffer;
 
         if (isOutside) {
-            isSticked = false;
-            stickedElement = null;
-
-            cursor.removeClass('morphing').css({
-                width: '20px',
-                height: '20px',
-                borderRadius: '0',
-                background: 'rgba(255, 255, 255, 0.8)',
-                transform: 'translate(-50%, -50%)',
-                clipPath: 'none',
+            resetCursor();
+            cursor.css({
                 left: e.pageX,
                 top: e.pageY
             });
@@ -164,36 +148,14 @@ $(document).ready(function () {
                 mouseY > (rect.bottom + scrollY) + buffer;
 
             if (isOutside) {
-                isSticked = false;
-                stickedElement = null
-
-                cursor.removeClass('morphing').css({
-                    width: '20px',
-                    height: '20px',
-                    borderRadius: '0',
-                    background: 'rgba(255, 255, 255, 0.8)',
-                    transform: 'translate(-50%, -50%)',
-                    clipPath: 'none'
-                });
+                resetCursor();
             }
         }
     });
 
     $(document).mouseleave(function () {
         cursor.css('opacity', '0');
-        isSticked = false;
-        stickedElement = null;
-        
-        cursor.removeClass('morphing').css({
-            width: '20px',
-            height: '20px',
-            borderRadius: '0',
-            background: 'rgba(255, 255, 255, 0.8)',
-            transform: 'translate(-50%, -50%)',
-            clipPath: 'none'
-        });
-        
-        helperCursor.addClass('hidden');
+        resetCursor();
     });
 
     $(document).mouseenter(function () {
@@ -209,6 +171,7 @@ $(document).ready(function () {
             }
         }
     });
+
     
     $('.extend, .video').on('focus', function() {
         const element = $(this);
@@ -224,7 +187,3 @@ $(document).ready(function () {
         }
     });
 });
-
-
-
-

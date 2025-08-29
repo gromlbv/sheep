@@ -1,6 +1,9 @@
 let distractionTimeout = null;
 let isDistractionHidden = false;
 
+
+// keyboard controls, managed in SetState
+
 function setRightArrowAction(state){
     document.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowRight') {
@@ -16,19 +19,15 @@ function setLeftArrowAction(state){
     });
 }
 
-function startDistractionHideTimer() {
+
+// when cursor is not moving all 'blur-out' elements blurred - do hide distractions
+
+function startDistractionTimer() {
     clearTimeout(distractionTimeout);
     showDistractions();
     distractionTimeout = setTimeout(() => {
         hideDistractions();
     }, 3000);
-}
-
-function hideDistractions() {
-    if (!isDistractionHidden) {
-        $('.blur-out').addClass('blurred');
-        isDistractionHidden = true;
-    }
 }
 
 function showDistractions() {
@@ -38,16 +37,27 @@ function showDistractions() {
     }
 }
 
+function hideDistractions() {
+    if (!isDistractionHidden) {
+        $('.blur-out').addClass('blurred');
+        isDistractionHidden = true;
+    }
+}
+
+
 ['mousemove', 'mousedown', 'keydown', 'touchstart'].forEach(event => {
     document.addEventListener(event, () => {
         if (state === 'landing-active' || state === 'view-video') {
-            startDistractionHideTimer();
+            startDistractionTimer();
         } else {
             showDistractions();
             clearTimeout(distractionTimeout);
         }
     });
 });
+
+
+// manages rows
 
 function setState(newState) {
     if (newState == state) return;
@@ -87,11 +97,10 @@ function setState(newState) {
 
             break;
 
-
         case 'landing-active':
             to_all_videos.removeClass('hidden');
             logo.addClass('page-loaded');
-            startDistractionHideTimer()
+            startDistractionTimer()
 
             animateRow(all_videos, 'outRight');
             animateRow(video_ended, 'outLeft');
@@ -118,7 +127,7 @@ function setState(newState) {
             back.removeClass('hidden');
             info.removeClass('hidden');
 
-            startDistractionHideTimer()
+            startDistractionTimer()
 
             animateRow(all_videos, 'outRight');
             animateRow(video_info, 'outLeft');
@@ -139,7 +148,7 @@ function setState(newState) {
             animateRow(video_info, 'inLeft');
 
             setRightArrowAction('all-videos');
-            
+
             break;
 
         case 'view-contacts':
@@ -152,6 +161,9 @@ function setState(newState) {
             break;
     }
 }
+
+
+// button events, triggers SetState
 
 $('.video.view, #play, #hide-info, #hide-videos').on('click', () =>
 setState('view-video'));

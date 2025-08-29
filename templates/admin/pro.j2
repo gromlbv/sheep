@@ -1,0 +1,130 @@
+{% extends 'admin/base.j2' %}
+
+
+{% block content %}
+
+<div class="flex flex-center gap-6 pad-12 fixed">
+    <img src="{{ url_for('static', filename='images/logos/header.svg') }}" alt="logo" class="logo">
+
+    <a class="pro-btn" href="/">BACK TO HOME</a>
+    <a class="pro-btn" href="/pro/logout">LOGOUT</a>
+    <a class="pro-btn blue" href="/pro/add">ADD VIDEO</a>
+</div>
+
+<div class="header-gap"></div>
+<style>
+    .fixed {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        background-color: #000;
+
+        img{
+            padding: 12px;
+        }
+    }
+
+    .header-gap {
+        height: 10rem;
+    }
+</style>
+
+<div class="videos pro">
+    {% if videos %} {% for video in videos %}
+        <div class="video">
+            <h3>{{ video.title }}</h3>
+            <div class="flex gap-12">
+
+                <div class="flex-cl">
+                {% for credit in video.credits %}
+                    <p>
+                        {% if credit.is_fav %}
+                        <img style="height: 16px;" src="{{ url_for('static', filename='/icons/pin-fill.svg') }}">
+                        {% else %}
+                        <img style="height: 16px;" src="{{ url_for('static', filename='/icons/pin-outline.svg') }}">
+                        {% endif %}
+                        <strong>{{ credit.role }}:</strong> {{ credit.name }}
+                    </p>
+                {% endfor %}
+                </div>
+                 
+                <div class="flex">
+                    <div class="item">
+                        <!-- <label for="video">Video</label> -->
+                        <video id="video" src="{{ url_for('static', filename='videos/' + video.url) }}.mp4" autoplay loop muted playsinline></video>
+                    </div>
+                </div>
+            </div>
+
+            <div class="absolute-btn">
+                <form action="/pro/up/{{ video.url }}" method="post">
+                    <button type="submit">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="34" height="18" viewBox="0 0 34 18" fill="none">
+                            <rect width="4.85714" height="4.85714" transform="matrix(4.37114e-08 -1 -1 -4.37114e-08 34 17.2842)" fill="white"/>
+                            <rect width="4.85714" height="4.85714" transform="matrix(4.37114e-08 -1 -1 -4.37114e-08 29.1406 13.0498)" fill="white"/>
+                            <rect width="4.85714" height="4.85714" transform="matrix(4.37114e-08 -1 -1 -4.37114e-08 24.2852 8.80762)" fill="white"/>
+                            <rect x="19.4297" y="0.713867" width="4.85714" height="4.85714" transform="rotate(90 19.4297 0.713867)" fill="white"/>
+                            <rect x="14.5703" y="3.95215" width="4.85714" height="4.85714" transform="rotate(90 14.5703 3.95215)" fill="white"/>
+                            <rect x="9.71484" y="8.19043" width="4.85714" height="4.85714" transform="rotate(90 9.71484 8.19043)" fill="white"/>
+                            <rect x="4.85547" y="12.4287" width="4.85714" height="4.85714" transform="rotate(90 4.85547 12.4287)" fill="white"/>
+                        </svg>
+                    </button>
+                </form>
+                <form action="/pro/down/{{ video.url }}" method="post">
+                    <button type="submit">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="34" height="18" viewBox="0 0 34 18" fill="none">
+                            <rect x="34" y="0.71582" width="4.85714" height="4.85714" transform="rotate(90 34 0.71582)" fill="white"/>
+                            <rect x="29.1406" y="4.9502" width="4.85714" height="4.85714" transform="rotate(90 29.1406 4.9502)" fill="white"/>
+                            <rect x="24.2852" y="9.19238" width="4.85714" height="4.85714" transform="rotate(90 24.2852 9.19238)" fill="white"/>
+                            <rect width="4.85714" height="4.85714" transform="matrix(-4.37114e-08 -1 -1 4.37114e-08 19.4297 17.2861)" fill="white"/>
+                            <rect width="4.85714" height="4.85714" transform="matrix(-4.37114e-08 -1 -1 4.37114e-08 14.5703 14.0479)" fill="white"/>
+                            <rect width="4.85714" height="4.85714" transform="matrix(-4.37114e-08 -1 -1 4.37114e-08 9.71484 9.80957)" fill="white"/>
+                            <rect width="4.85714" height="4.85714" transform="matrix(-4.37114e-08 -1 -1 4.37114e-08 4.85547 5.57129)" fill="white"/>
+                        </svg>
+                    </button>
+                </form>
+                <form action="/pro/delete/{{ video.url }}" method="post">
+                    <button class="delete" type="submit">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36" fill="none">
+                            <rect x="9.06875" y="27.4625" width="3.3875" height="3.3875" transform="rotate(90 9.06875 27.4625)" fill="#FF0000" stroke="#FF0000" stroke-width="0.2"/>
+                            <rect x="9.06875" y="22.15" width="3.3875" height="3.3875" transform="rotate(90 9.06875 22.15)" fill="#FF0000" stroke="#FF0000" stroke-width="0.2"/>
+                            <rect x="9.06875" y="16.8375" width="3.3875" height="3.3875" transform="rotate(90 9.06875 16.8375)" fill="#FF0000" stroke="#FF0000" stroke-width="0.2"/>
+                            <rect x="9.06875" y="11.525" width="3.3875" height="3.3875" transform="rotate(90 9.06875 11.525)" fill="#FF0000" stroke="#FF0000" stroke-width="0.2"/>
+                            <rect x="9.06875" y="6.2125" width="3.3875" height="3.3875" transform="rotate(90 9.06875 6.2125)" fill="#FF0000" stroke="#FF0000" stroke-width="0.2"/>
+                            <rect x="3.75625" y="6.2125" width="3.3875" height="3.3875" transform="rotate(90 3.75625 6.2125)" fill="#FF0000" stroke="#FF0000" stroke-width="0.2"/>
+                            <rect x="25.0063" y="0.9" width="3.3875" height="14.0125" transform="rotate(90 25.0063 0.9)" fill="#FF0000" stroke="#FF0000" stroke-width="0.2"/>
+                            <rect x="19.6938" y="0.9" width="3.3875" height="3.3875" transform="rotate(90 19.6938 0.9)" fill="#FF0000" stroke="#FF0000" stroke-width="0.2"/>
+                            <rect x="25.0063" y="0.9" width="3.3875" height="3.3875" transform="rotate(90 25.0063 0.9)" fill="#FF0000" stroke="#FF0000" stroke-width="0.2"/>
+                            <rect x="14.3813" y="6.2125" width="3.3875" height="3.3875" transform="rotate(90 14.3813 6.2125)" fill="#FF0000" stroke="#FF0000" stroke-width="0.2"/>
+                            <rect x="14.3813" y="31.7125" width="3.3875" height="3.3875" transform="rotate(90 14.3813 31.7125)" fill="#FF0000" stroke="#FF0000" stroke-width="0.2"/>
+                            <rect x="19.6938" y="6.2125" width="3.3875" height="3.3875" transform="rotate(90 19.6938 6.2125)" fill="#FF0000" stroke="#FF0000" stroke-width="0.2"/>
+                            <rect x="14.3813" y="15.775" width="3.3875" height="3.3875" transform="rotate(90 14.3813 15.775)" fill="#FF0000" stroke="#FF0000" stroke-width="0.2"/>
+                            <rect x="19.6938" y="15.775" width="3.3875" height="3.3875" transform="rotate(90 19.6938 15.775)" fill="#FF0000" stroke="#FF0000" stroke-width="0.2"/>
+                            <rect x="25.0063" y="15.775" width="3.3875" height="3.3875" transform="rotate(90 25.0063 15.775)" fill="#FF0000" stroke="#FF0000" stroke-width="0.2"/>
+                            <rect x="14.3813" y="18.9625" width="3.3875" height="3.3875" transform="rotate(90 14.3813 18.9625)" fill="#FF0000" stroke="#FF0000" stroke-width="0.2"/>
+                            <rect x="19.6938" y="18.9625" width="3.3875" height="3.3875" transform="rotate(90 19.6938 18.9625)" fill="#FF0000" stroke="#FF0000" stroke-width="0.2"/>
+                            <rect x="25.0063" y="18.9625" width="3.3875" height="3.3875" transform="rotate(90 25.0063 18.9625)" fill="#FF0000" stroke="#FF0000" stroke-width="0.2"/>
+                            <rect x="14.3813" y="22.15" width="3.3875" height="3.3875" transform="rotate(90 14.3813 22.15)" fill="#FF0000" stroke="#FF0000" stroke-width="0.2"/>
+                            <rect x="19.6938" y="22.15" width="3.3875" height="3.3875" transform="rotate(90 19.6938 22.15)" fill="#FF0000" stroke="#FF0000" stroke-width="0.2"/>
+                            <rect x="25.0063" y="22.15" width="3.3875" height="3.3875" transform="rotate(90 25.0063 22.15)" fill="#FF0000" stroke="#FF0000" stroke-width="0.2"/>
+                            <rect x="19.6938" y="31.7125" width="3.3875" height="3.3875" transform="rotate(90 19.6938 31.7125)" fill="#FF0000" stroke="#FF0000" stroke-width="0.2"/>
+                            <rect x="25.0063" y="6.2125" width="3.3875" height="3.3875" transform="rotate(90 25.0063 6.2125)" fill="#FF0000" stroke="#FF0000" stroke-width="0.2"/>
+                            <rect x="25.0063" y="31.7125" width="3.3875" height="3.3875" transform="rotate(90 25.0063 31.7125)" fill="#FF0000" stroke="#FF0000" stroke-width="0.2"/>
+                            <rect x="30.3188" y="6.2125" width="3.3875" height="3.3875" transform="rotate(90 30.3188 6.2125)" fill="#FF0000" stroke="#FF0000" stroke-width="0.2"/>
+                            <rect x="35.6313" y="6.2125" width="3.3875" height="3.3875" transform="rotate(90 35.6313 6.2125)" fill="#FF0000" stroke="#FF0000" stroke-width="0.2"/>
+                            <rect x="30.3188" y="11.525" width="3.3875" height="3.3875" transform="rotate(90 30.3188 11.525)" fill="#FF0000" stroke="#FF0000" stroke-width="0.2"/>
+                            <rect x="30.3188" y="16.8375" width="3.3875" height="3.3875" transform="rotate(90 30.3188 16.8375)" fill="#FF0000" stroke="#FF0000" stroke-width="0.2"/>
+                            <rect x="30.3188" y="22.15" width="3.3875" height="3.3875" transform="rotate(90 30.3188 22.15)" fill="#FF0000" stroke="#FF0000" stroke-width="0.2"/>
+                            <rect x="30.3188" y="27.4625" width="3.3875" height="3.3875" transform="rotate(90 30.3188 27.4625)" fill="#FF0000" stroke="#FF0000" stroke-width="0.2"/>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+    {% endfor %}{% endif %}
+</div>
+
+
+{% endblock content %}

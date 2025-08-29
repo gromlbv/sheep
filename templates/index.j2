@@ -1,0 +1,143 @@
+{% from 'components/video_clear.j2' import video_clear %}
+{% from 'components/contact_row.j2' import contact_row %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ELECTRIC SHEEP FILM</title>
+    <meta name="description" content="Electric Sheep Film is a production company based in Ukraine, but we work with clients and creative partners all over the world. We focus on high-end commercial work — cinematic, visually sharp, and concept-driven.
+    Over the years, we’ve built up strong experience working with international brands like McDonald’s, Pepsi, and Parimatch, and we’ve had the chance to collaborate with some of the biggest names in sports — including football stars from Chelsea and Juventus.
+    Whether we’re shooting in Kyiv, London, or elsewhere, our goal is always the same: to bring bold ideas to life with strong visuals, smooth production, and attention to every detail.">
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script type="module" src="https://lbvo.ru/utils/init.js" async defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="{{ url_for('static', filename='js/scroll.js') }}"></script>
+
+    <link rel="icon" type="image/png" href="static/images/logos/favicon.ico">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/main.css') }}">
+</head>
+
+<body>
+    <img src="static/images/logos/header.svg" alt="Logo" id="logo">
+
+    <div class="loading">
+        {% for i in range(240) %}
+            <div class="pixel"></div>
+        {% endfor %}
+    </div>
+
+    <header class="blur-out">
+        <a href="/" class="active cursor-hover">HOME</a>
+        <a href="/about" class="cursor-hover">ABOUT</a>
+        <a href="/contact" class="cursor-hover">CONTACT</a>
+        <div class="divider">
+            <span>|</span>
+        </div>
+        <button id="volume" class="cursor-hover">
+            <img src="/static/icons/volume-off.svg" draggable="false" alt="VOLUME">
+        </button>
+    </header>
+
+    <div class="custom-cursor blur-out"></div>
+    <div class="custom-cursor-helper hidden"></div>
+
+    <div class="content home active">
+        <div class="image">
+            <video id="main-video" autoplay playsinline muted></video>
+            <div class="video-text absolute bottom left">
+                Creative Agency: LOADING <br>
+                Production: LOADING <br>
+                Director: LOADING <br>
+                DOP: LOADING <br>
+                1st AD: LOADING <br>
+            </div>
+            <div id="play" class="extend left cursor-hover" role="button" aria-label="Play video">
+                <div class="info">
+                    <img src="static/icons/play.svg" draggable="false">
+                    PLAY
+                </div>
+            </div>
+
+            <div id="to-all-videos" class="extend right hidden cursor-hover" role="button" aria-label="View all videos">
+                <div class="info">
+                    <img src="static/icons/arrow-right.svg" draggable="false">
+                    ALL VIDEOS
+                </div>
+            </div>
+            <div id="back" class="extend right hidden cursor-hover" role="button" aria-label="Go back">
+                <div class="info">
+                    <img src="static/icons/arrow-right.svg" draggable="false">
+                    BACK
+                </div>
+            </div>
+            <div id="info" class="extend left hidden cursor-hover" role="button" aria-label="Show video info">
+                <div class="info">
+                    <img src="static/icons/info.svg" draggable="false">
+                    INFO
+                </div>
+            </div>
+
+            <div id="hide-info" class="extend fill invisible hidden cursor-hover">
+                <div class="info">
+                    Hide info
+                </div>
+            </div>
+
+            <div id="hide-videos" class="extend fill invisible hidden cursor-hover">
+                <div class="info">
+                    Hide videos
+                </div>
+            </div>
+        </div>
+
+        <div class="video-row all-videos">
+            {{ video_clear() }}
+            {{ video_clear() }}
+            {{ video_clear() }}
+            {{ video_clear() }}
+
+            {% for video in videos %}
+                <div class="cursor-hover video view" data-url="{{ video.url }}" data-credits="{{ video.credits_text }}" data-credits-simple="{{ video.credits_simple }}" tabindex="0" role="button" aria-label="Play {{ video.title }}">
+                    <span class="num">#0</span>
+                    <span>{{ video.title }}</span>
+                </div>
+            {% endfor %}
+
+            {{ video_clear() }}
+            {{ video_clear() }}
+        </div>
+
+        <div class="video-row video-info">
+            {{ video_clear() }}
+            {{ video_clear() }}
+            {{ video_clear() }}
+
+            <div class="video"><span>Something probably went wrong...</span></div>
+
+            {{ video_clear() }}
+            {{ video_clear() }}
+        </div>
+
+        <div class="video-row video-ended">
+            <div class="video cursor-hover">
+                <a href="/contact">Enjoyed the video?       Let's get in touch!</a>
+            </div>
+            <div class="video cursor-hover" id="watch-again"><span>Watch again</span></div>
+            <div class="video cursor-hover" id="view-credits"><span>View credits</span></div>
+        </div>
+
+        {{ contact_row() }}
+        
+    </div>
+</body>
+
+<script src="/static/js/mouse.js"></script>
+<script src="/static/js/main.js"></script>
+<script src="/static/js/loading.js"></script>
+<script src="/static/js/states.js"></script>
+
+</html>
